@@ -8,5 +8,5 @@
         }
     ],
     "require": {},
-    "minimun-stability":"beta"
+    "minimun-stability":"stable"
 }
