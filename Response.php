@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_Response {
+namespace Xlib;
+
+class Response {
 
     protected $status = 'OK';
     protected $message = '' ;
@@ -38,7 +40,7 @@ class Xlib_Response {
         ) ;
 
         switch ( $this->outputType ) {
-            case "json" :  return Xlib_Json::encode ( $response ) ;
+            case "json" :  return Json::encode ( $response ) ;
         }
 
 

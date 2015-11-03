@@ -1,5 +1,8 @@
 <?php
-class XSmarty {
+
+namespace Xlib;
+
+class View {
 
 	private 		$session ;
     protected 		$view_vars        	= array ( ) ;   	// variaveis que serão disponiveis na camada view
@@ -41,24 +44,24 @@ class XSmarty {
         
         try {
             
-            if ( is_array ( $requestedPermission ) && !empty ( $requestedPermission['permission'] ) ) {
-                $tipoAcao               = $requestedPermission['tipoAcao'];
-                $permissoes             = $requestedPermission['permissoes'];
-                $requestedPermission    = $requestedPermission['permission'];
-            } else if ( $requestedPermission === null ) {
-                $tipoAcao               = $this->permission['tipoAcao'];
-                $permissoes             = $this->permission['permissoes'];
-                $requestedPermission    = $this->permission['permission'];
-            }
+            // if ( is_array ( $requestedPermission ) && !empty ( $requestedPermission['permission'] ) ) {
+            //     $tipoAcao               = $requestedPermission['tipoAcao'];
+            //     $permissoes             = $requestedPermission['permissoes'];
+            //     $requestedPermission    = $requestedPermission['permission'];
+            // } else if ( $requestedPermission === null ) {
+            //     $tipoAcao               = $this->permission['tipoAcao'];
+            //     $permissoes             = $this->permission['permissoes'];
+            //     $requestedPermission    = $this->permission['permission'];
+            // }
 
-            if ( $tipoAcao === null )   $tipoAcao = Permissoes::TIPO_ACAO;
-            if ( $permissoes === null ) $permissoes = Permissoes::CONSULTAR;
+            // if ( $tipoAcao === null )   $tipoAcao = Permissoes::TIPO_ACAO;
+            // if ( $permissoes === null ) $permissoes = Permissoes::CONSULTAR;
 
-            if ( Permissoes::hasPermission ( $requestedPermission , $tipoAcao , $permissoes ) === "S" ) {
-                return true ;
-            } else {
-                return false ;
-            }
+            // if ( Permissoes::hasPermission ( $requestedPermission , $tipoAcao , $permissoes ) === "S" ) {
+            //     return true ;
+            // } else {
+            //     return false ;
+            // }
             
         } catch ( Exception $err ) {
             if ( DEBUG ) throw new Exception ( "Erro na definição de permissão de acesso: " . $err->getMessage( ) ) ;
@@ -66,23 +69,7 @@ class XSmarty {
         }
 
 	}
-    
-    /**
-     * 
-     */
-    public function validaSessaoRPC ( ) {
-        
-        if ( empty ( $_SESSION['USUARIO'] ) ) {
-            if ( $_SERVER['SERVER_NAME'] === 'manila.intranet' ) {
-                die ( "<script>\n // POR FAVOR FAÇA LOGIN NO SISTEMA\n\nwindow.location.href = \"http://manila.intranet/novaintranet/modulos/login/index.php\";\n </script> " ) ;
-        //        header ( "Location: http://manila.intranet/novaintranet/modulos/login/index.php" ) ;
-            } else {
-                die ( "<script>\n // POR FAVOR FAÇA LOGIN NO SISTEMA\n\nwindow.location.href = \"http://intranetrpc.intranet/modulos/login/index.php\";\n </script> " ) ;
-        //        header ( "Location: http://intranetrpc.intranet/modulos/login/index.php" ) ;
-            }
-        }
-        
-    }    
+     
 
 	/**
 	 * @override
@@ -90,7 +77,7 @@ class XSmarty {
 	 * */
 	public function display( $template = "" , $enableUserMessages = true ){
 
-		$this->assign ( 'DISPLAY_ID' 	, XSmarty::$DISPLAY_ID++ ) ;
+		$this->assign ( 'DISPLAY_ID' 	, View::$DISPLAY_ID++ ) ;
         
 		if ( $template == "" ) {
             $template =  'tpl/' . basename ( basename ( $_SERVER['SCRIPT_FILENAME'] ) , ".php" ) . ".phtml" ;
@@ -121,7 +108,7 @@ class XSmarty {
      */
 	public static function getUserMessage ( ) {
 		if ( $this->session->hasMessage() ) {
-			$error_messages = XSmarty::getErrorMessagesHTML();
+			$error_messages = View::getErrorMessagesHTML();
 		} else {
 			$error_messages = "" ;
 		}

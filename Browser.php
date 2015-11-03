@@ -45,7 +45,10 @@
  *
  * @author hugo.ferreira
  */
-class XBrowser {
+
+namespace Xlib;
+
+class Browser {
 
 	protected $url ;
 

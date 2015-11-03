@@ -1,10 +1,12 @@
 <?php
 
-class Xlib_Request {
+namespace Xlib;
+
+class Request {
 
     public static function get ( $key , $default = "" ) {
-        if ( strpos ( $key , "[" ) ) return Xlib_Request::getArrayRecursiveKey ( $key , $_REQUEST , $default ) ;
-        if ( isset ( $_REQUEST[$key] ) ) return Xlib_Request::basicFilter ( $_REQUEST[$key] ) ;
+        if ( strpos ( $key , "[" ) ) return Request::getArrayRecursiveKey ( $key , $_REQUEST , $default ) ;
+        if ( isset ( $_REQUEST[$key] ) ) return Request::basicFilter ( $_REQUEST[$key] ) ;
         return $default ;
     }
 
@@ -26,7 +28,7 @@ class Xlib_Request {
      */
     public static function isSetOneOf ( Array $keyList ) {
         foreach ( $keyList as $key ) {
-            $val = Xlib_Request::get($key) ;
+            $val = Request::get($key) ;
             if ( !empty ( $val ) ) return true ;
         }
         return false ;
@@ -39,24 +41,24 @@ class Xlib_Request {
      */
     public static function isSetAllOf ( Array $keyList ) {
         foreach ( $keyList as $key ) {
-            $val = Xlib_Request::get($key);
+            $val = Request::get($key);
             if ( empty ( $val ) ) return false ;
         }
         return true ;
     }
 
     public static function getInt ( $key , $default = 0 ) {
-        return (int) preg_replace ( '/[^\d]+/' , '' , Xlib_Request::get($key,$default) ) ;
+        return (int) preg_replace ( '/[^\d]+/' , '' , Request::get($key,$default) ) ;
     }
 
     public static function getPost ( $key , $default = "" ) {
-        if ( strpos ( $key , "[" ) ) return Xlib_Request::getArrayRecursiveKey ( $key , $_POST , $default ) ;
-        if ( isset ( $_POST[$key] ) ) return Xlib_Request::basicFilter ( $_POST[$key] ) ;
+        if ( strpos ( $key , "[" ) ) return Request::getArrayRecursiveKey ( $key , $_POST , $default ) ;
+        if ( isset ( $_POST[$key] ) ) return Request::basicFilter ( $_POST[$key] ) ;
         return $default ;
     }
 
     public static function getGet ( $key , $default = "" ) {
-        if ( isset ( $_GET[$key] ) ) return Xlib_Request::basicFilter ( $_GET[$key] ) ;
+        if ( isset ( $_GET[$key] ) ) return Request::basicFilter ( $_GET[$key] ) ;
         return $default ;
     }
 

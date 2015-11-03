@@ -1,7 +1,10 @@
 <?php
+
 /**
+ * ### USE Xlib\Browser ###
  * PARA USAR COM SERVLETS, E COMUNICAÇÃO SERVER TO SERVER WEBSERVICE ETC
  */
+namespace Xlib;
 
 class Http {
 

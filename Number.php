@@ -1,5 +1,7 @@
 <?php
 
+namespace Xlib;
+
 class Number {
 
     /**

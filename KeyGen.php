@@ -3,7 +3,7 @@
  * author: Hugo Ferreira
  * last update: 07-out-2014
  */
-
+namespace Xlib;
 
 class KeyGen2 {
 
@@ -91,19 +91,6 @@ class KeyGen2 {
      */
     public function encrypt ( $string , $key = '' ) {
 		return mcrypt_encrypt ( MCRYPT_RIJNDAEL_256 , substr ( base64_encode ( md5 ( base64_encode ( $this->salt ) ) . sha1 ( $key . $this->salt ) ) , 3 , 32 ) , $string , MCRYPT_MODE_CBC , substr ( base64_encode ( md5 ( $this->salt . $key ) . md5 ( $key ) ) , 2 , 32 ) )  ;
-
-		// ****************************************************************
-		// INSECURE MODE BELOW ********************************************
-		// ****************************************************************
-        // $key    = sha1 ( $this->secretHashPadding . $key ) ;
-        // $result = '';
-        // for($i = 0; $i < strlen($string); $i++) {
-        //     $char = substr($string, $i, 1);
-        //     $keychar = substr($key, ($i % strlen($key))-1, 1);
-        //     $char = chr(ord($char) + ord($keychar));
-        //     $result .= $char;
-        // }
-        // return base64_encode($result) ;
     }
 
     /**
@@ -118,19 +105,6 @@ class KeyGen2 {
      */
     public function decrypt ( $string , $key = '' ) {
 		return mcrypt_decrypt ( MCRYPT_RIJNDAEL_256 , substr ( base64_encode ( md5 ( base64_encode ( $this->salt ) ) . sha1 ( $key . $this->salt ) ) , 3 , 32 ) , $string , MCRYPT_MODE_CBC , substr ( base64_encode ( md5 ( $this->salt . $key ) . md5 ( $key ) ) , 2 , 32 ) )  ;
-
-		// ****************************************************************
-		// INSECURE MODE BELOW ********************************************
-		// ****************************************************************
-		// $key    = sha1 ( $this->secretHashPadding . $key ) ;
-		// $string = base64_decode( $string ) ;
-		// for($i = 0; $i < strlen($string); $i++) {
-		//     $char = substr($string, $i, 1);
-		//     $keychar = substr($key, ($i % strlen($key))-1, 1);
-		//     $char = chr(ord($char) - ord($keychar));
-		//     $result .= $char;
-		// }
-		// return $result;
     }
 
 

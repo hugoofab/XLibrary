@@ -1,5 +1,8 @@
 <?php
-class Xlib_XDate {
+
+namespace Xlib;
+
+class Date {
 
 	private $dateFormat = "d/m/Y H:i:s" ;
 	private $emptyTimeFormat = "__/__/___ --:--:--";
@@ -47,7 +50,7 @@ class Xlib_XDate {
 	}
 
 	public function getInstance ( $timestamp = false , $dateFormat = false ) {
-		$instance = new XDate ( $timestamp , $dateFormat );
+		$instance = new Date ( $timestamp , $dateFormat );
 		return $instance ;
 	}
 
@@ -182,7 +185,7 @@ class Xlib_XDate {
 	}
 
 	// public function toBr ( ) {
-	// 	$this->date = Xlib_XDate::brToBr($this->date);
+	// 	$this->date = Date::brToBr($this->date);
 	// 	return $this ;
 	// }
 
@@ -220,17 +223,17 @@ class Xlib_XDate {
             $years          = (int) ( $days / 365 ) ;
             $arrResult[]    = $years . ( ( $years === 1 ) ? " ano" : " anos" ) ;
             $resto          = $days % 365 ;
-            if ( $resto > 0 ) return Xlib_XDate::daysToHuman ( $resto , $week , $arrResult ) ;
+            if ( $resto > 0 ) return Date::daysToHuman ( $resto , $week , $arrResult ) ;
         } else if ( $days >= 30 ) {
             $month          = (int) ( $days / 30 ) ;
             $arrResult[]    = $month . ( ( $month === 1 ) ? " mês" : " meses" ) ;
             $resto          = $days % 30 ;
-            if ( $resto > 0 ) return Xlib_XDate::daysToHuman ( $resto , $week , $arrResult ) ;
+            if ( $resto > 0 ) return Date::daysToHuman ( $resto , $week , $arrResult ) ;
         } else if ( $week && $days >= 7 ) {
             $weeks          = (int) ( $days / 7 ) ;
             $arrResult[]    = $weeks . ( ( $weeks === 1 ) ? " semana" : " semanas" ) ;
             $resto          = $days % 7 ;
-            if ( $resto > 0 ) return Xlib_XDate::daysToHuman ( $resto , $week , $arrResult ) ;
+            if ( $resto > 0 ) return Date::daysToHuman ( $resto , $week , $arrResult ) ;
         } else if ( $days > 0 ) {
             $arrResult[] = $days . ( ( $days === 1 ) ? " dia" : " dias" ) ;
         }

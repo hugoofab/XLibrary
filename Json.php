@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_Json {
+namespace Xlib;
+
+class Json {
 
     /**
      * Gera um json com base em um array
@@ -35,11 +37,11 @@ class Xlib_Json {
         $result = array ( ) ;
         if ( $isList ) {
             foreach ( $array as $v )
-                $result[] = Xlib_Json::encode ( $v ) ;
+                $result[] = Json::encode ( $v ) ;
             return '[' . join ( ',' , $result ) . ']' ;
         } else {
             foreach ( $array as $k => $v )
-                $result[] = Xlib_Json::encode ( $k ) . ':' . Xlib_Json::encode ( $v ) ;
+                $result[] = Json::encode ( $k ) . ':' . Json::encode ( $v ) ;
             return '{' . join ( ',' , $result ) . '}' ;
         }
     }

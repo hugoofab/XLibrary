@@ -1,4 +1,7 @@
 <?php
+
+namespace Xlib;
+
 class Validate {
 	
     /**
