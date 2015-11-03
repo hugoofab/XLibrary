@@ -7,5 +7,6 @@
             "email": "hugoofab@gmail.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "minimun-stability":"beta"
 }
