@@ -1,6 +1,6 @@
 <?php
 
-namespace Xlib;
+namespace xlibrary;
 
 class Request {
 

@@ -16,7 +16,7 @@
  * @author hugo.ferreira
  */
 
-namespace Xlib;
+namespace xlibrary;
 
 class ModelAbstract {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Xlib;
+namespace xlibrary;
 
 class Route {
 	
@@ -59,8 +59,8 @@ class Route {
 		
 		require_once ( $fileName );
 		$className = ucwords($this->controller)."Controller";
-		$Controller->preDispatch();
 		$Controller = new ${className}();
+		$Controller->preDispatch();
 		$actionName = $this->action . "Action" ;
 		$Controller->${actionName}();
 
