@@ -32,6 +32,7 @@ if ( !function_exists ( "pr" ) ) {
 	// pr die
 	function prd ( ) {
     	$backTrace = debug_backtrace ();
+    		if ( !defined ( 'DEBUG' ) || DEBUG === false ) return ;
 		$varList   = func_get_args ( );
 		_pr ( $varList , "#0F0" , "#000" , $backTrace ) ;
 		exit;
