@@ -62,7 +62,6 @@ function _pr ( $varList = "" , $foreground = "#0F0" , $background = "#000" , $ba
 
     $file = $options['File'];
     $line = $options['Line'];
-    $type = strtolower($type);
 
 	$id = md5 ( print_r ( $varList , true ) . rand ( 0 , 100 ) ) ;
 
