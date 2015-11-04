@@ -1,6 +1,6 @@
 <?php
 
-namespace xlibrary;
+namespace Xlib;
 
 class Validate {
 	

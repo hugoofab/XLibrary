@@ -3,7 +3,7 @@
  * author: Hugo Ferreira
  * last update: 07-out-2014
  */
-namespace xlibrary;
+namespace Xlib;
 
 class KeyGen2 {
 
