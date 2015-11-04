@@ -3,6 +3,7 @@
         "psr-4": {"Xlib\\": "./"}
     },
     "name": "hugoofab/xlibrary",
+    "version" : "1.0.0-beta",
     "description": "Common generic classes useful when you're not using a php framework",
     "authors": [
         {
