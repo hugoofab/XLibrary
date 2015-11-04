@@ -58,11 +58,11 @@ class Route {
 		if ( !$fileName ) return $this->error404 ( );
 		
 		require_once ( $fileName );
-		$className = ucwords($this->controller)."Controller";
-		$Controller = new ${className}();
+		$className  = ucwords($this->controller)."Controller";
+		$Controller = new $className();
 		$Controller->preDispatch();
 		$actionName = $this->action . "Action" ;
-		$Controller->${actionName}();
+		$Controller->$actionName();
 
 	}
 
