@@ -1,4 +1,7 @@
 {
+    "autoload": {
+        "psr-4": {"Xlib\\": "./"}
+    },
     "name": "hugoofab/xlibrary",
     "description": "Common generic classes useful when you're not using a php framework",
     "authors": [
