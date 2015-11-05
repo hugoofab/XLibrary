@@ -66,6 +66,11 @@ class Route {
 	}
 
 	public function error404 ( ) {
+		$dump = array (
+			'path' => $this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php" ,
+			'realpath' => realpath($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php"),
+		);
+		pr($dump);
 		die ( "página não encontrada" ) ;
 	}
 
