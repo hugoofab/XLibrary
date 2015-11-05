@@ -54,7 +54,6 @@ class Route {
 	public function dispatch ( ) {
 
 		$fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php") or $fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . $this->controller . "Controller.php") ;
-		if (!$fileName ) pre($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php");
 		if ( !$fileName ) return $this->error404 ( );
 		
 		require_once ( $fileName );
