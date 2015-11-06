@@ -54,20 +54,31 @@ class Route {
 	public function dispatch ( ) {
 
 		$fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php") or $fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . $this->controller . "Controller.php") ;
-		if (!$fileName ) pre($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php");
-		if ( !$fileName ) return $this->error404 ( );
+		if ( !$fileName ) return $this->error404 ( "Controller not found" ) ;
 		
 		require_once ( $fileName );
 		$className  = ucwords($this->controller)."Controller";
 		$Controller = new $className();
-		$Controller->preDispatch();
 		$actionName = $this->action . "Action" ;
+		if ( !method_exists ( $Controller , $actionName ) ) return $this->error404 ( "Action not found" ) ;
+		if ( method_exists ( $Controller , "preDispatch" ) ) $Controller->preDispatch ( array ( 'module' => $this->module , 'controller' => $this->controller , 'action' => $this->action ) );
 		$Controller->$actionName();
 
 	}
 
-	public function error404 ( ) {
-		die ( "página não encontrada" ) ;
+	// public function exception ( $message , $number = 0 ) {
+		
+	// }
+
+	public function error404 ( $message = "" ) {
+		$dump = array (
+			'Message'    => $message ,
+			'Controller' => $this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php" ,
+			'Real Path'  => realpath($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php"),
+			'Action'     => $this->action 
+		);
+		pr($dump);
+		die ( "página não encontrada: " . $message ) ;
 	}
 
 	public function setModule ( $module ) {
