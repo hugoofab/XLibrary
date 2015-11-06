@@ -54,6 +54,7 @@ class Route {
 	public function dispatch ( ) {
 
 		$fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php") or $fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . $this->controller . "Controller.php") ;
+
 		if ( !$fileName ) return $this->error404 ( "Controller not found" ) ;
 		
 		require_once ( $fileName );
@@ -65,10 +66,6 @@ class Route {
 		$Controller->$actionName();
 
 	}
-
-	// public function exception ( $message , $number = 0 ) {
-		
-	// }
 
 	public function error404 ( $message = "" ) {
 		$dump = array (
