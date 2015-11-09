@@ -52,8 +52,8 @@ class ModelAbstract {
 
         try {
 
-            $start_time = microtime ( TRUE ) ;
-            $output = array ( );
+			$start_time = microtime ( TRUE ) ;
+			$output     = array ( );
 			if ( $db === false ) $db = ModelAbstract::$db;
 
             switch ($method) {
@@ -62,7 +62,7 @@ class ModelAbstract {
 					$res       = $statement->execute();
 					$output    = array ( );
 					$output    = $res->current();
-					$output    = array_shift ( $output );
+					if ( $output !== false ) $output = array_shift ( $output );
         		break;
             	case 'Row':
 					$statement = ModelAbstract::$db->query($query);
@@ -156,7 +156,7 @@ class ModelAbstract {
         while ( $pos = strpos ( $query , "?" , $pos ) )  {
             $value = array_shift ( $bindList ) ;
             if ( $value !== null ) {
-                $value = "'" . mysql_real_escape_string ( $value ) . "'" ;
+                $value = "'" . addslashes ( $value ) . "'" ;
             } else {
                 $value = " null " ;
             }

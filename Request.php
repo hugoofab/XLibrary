@@ -10,42 +10,71 @@ class Request {
         return $default ;
     }
 
-    public static function getArrayRecursiveKey (  $key , $REQUEST , $default = "") {
-        $value      = $REQUEST;
-        $key        = str_replace( "]" , "" , $key );
-        $keyList    = explode ( "[" , $key );
-        foreach ( $keyList as $currKey ) {
-            if ( !isset ( $value[$currKey] ) ) return $default ;
-            $value = $value[$currKey];
-        }
-        return $value ;
-    }
 
-    /**
-     * recebe um array de keys e retorna true se AO MENOS UMA delas estiver setada
-     * @param array $keyList lista de chaves para buscar no request
-     * @return boolean
-     */
-    public static function isSetOneOf ( Array $keyList ) {
-        foreach ( $keyList as $key ) {
-            $val = Request::get($key) ;
-            if ( !empty ( $val ) ) return true ;
-        }
-        return false ;
-    }
+    // CHECAR A NECESSIDADE DESSES METODOS
 
-    /**
-     * recebe um array de keys e retorna true se TODAS delas estiverem setadas
-     * @param array $keyList lista de chaves para buscar no request
-     * @return boolean
-     */
-    public static function isSetAllOf ( Array $keyList ) {
-        foreach ( $keyList as $key ) {
-            $val = Request::get($key);
-            if ( empty ( $val ) ) return false ;
-        }
-        return true ;
-    }
+			    /**
+			     * preciso ver o que isso faz e a real necessidade para que isso esteja nesta classe genérica
+			     * se não justificar a existencia deste método aqui, veja se é usado nos projetos atuais e 
+			     * remova caso não seja necessário
+			     * @param  [type] $key     [description]
+			     * @param  [type] $REQUEST [description]
+			     * @param  string $default [description]
+			     * @return [type]          [description]
+			     */
+			    public static function getArrayRecursiveKey (  $key , $REQUEST , $default = "") {
+			        $value      = $REQUEST;
+			        $key        = str_replace( "]" , "" , $key );
+			        $keyList    = explode ( "[" , $key );
+			        foreach ( $keyList as $currKey ) {
+			            if ( !isset ( $value[$currKey] ) ) return $default ;
+			            $value = $value[$currKey];
+			        }
+			        return $value ;
+			    }
+
+			    /**
+			     * recebe um array de keys e retorna true se AO MENOS UMA delas estiver setada
+			     * @param array $keyList lista de chaves para buscar no request
+			     * @return boolean
+			     */
+			    public static function isSetOneOf ( Array $keyList ) {
+			        foreach ( $keyList as $key ) {
+			            $val = Request::get($key) ;
+			            if ( !empty ( $val ) ) return true ;
+			        }
+			        return false ;
+			    }
+
+			    /**
+			     * recebe um array de keys e retorna true se TODAS delas estiverem setadas
+			     * @param array $keyList lista de chaves para buscar no request
+			     * @return boolean
+			     */
+			    public static function isSetAllOf ( Array $keyList ) {
+			        foreach ( $keyList as $key ) {
+			            $val = Request::get($key);
+			            if ( empty ( $val ) ) return false ;
+			        }
+			        return true ;
+			    }
+
+	// CHECAR A NECESSIDADE DESSES METODOS ACIMA
+
+	public static function getAsArray ( $source = "REQUEST" ) {
+		
+		switch ( strtoupper ( $source ) ) {
+			case 'REQUEST' : $source = $_REQUEST ; break ;
+			case 'POST'    : $source = $_POST    ; break ;
+			case 'GET'     : $source = $_GET     ; break ;
+			default        : $source = $_REQUEST ;
+		}
+
+		$output = array ( );
+		foreach ( $source as $key => $value ) $output[$key] = $value ;
+		return $output ;
+
+	}
 
     public static function getInt ( $key , $default = 0 ) {
         return (int) preg_replace ( '/[^\d]+/' , '' , Request::get($key,$default) ) ;
@@ -98,7 +127,7 @@ class Request {
      */
 	public static function addFeedback ( $feedback , $type = "info" , $icon = true , $nameSpace = "defaultNameSpace" ) {
 
-        $feedback = translateError ( $feedback ) ;
+        // $feedback = translateError ( $feedback ) ;
 
         $typeToIcon = array (
             "success"   => "glyphicon-ok-sign" ,

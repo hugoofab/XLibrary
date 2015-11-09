@@ -116,6 +116,8 @@ function obj2array ( &$Instance ) {
 function translateError ( $errorMessage ) {
 
     // errorBase.php return a array with key=>value pair where key is the original error and value is translated error
+    if ( !file_exists( "errorBase.php" ) ) return $errorMessage ;
+    
     $errorBase = include ( "errorBase.php" );
 
     if ( !array_key_exists ( $errorMessage , $errorBase ) ) return $errorMessage ;

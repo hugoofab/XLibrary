@@ -1,4 +1,12 @@
 <?php
+/**
+ * Para usar, crie uma classe que extenda esta (Xlib\DtoAbstract),
+ * crie os atributos e metodos get e set, principalmente set que serão necessários para carregar
+ * os atributos.
+ *
+ * o padrão para criação dos metodos é getVariablename onde o nome do atributo deve estar em minúsculo
+ * exceto o primeiro caractere
+ */
 
 namespace Xlib;
 
@@ -8,6 +16,12 @@ namespace Xlib;
  * @author hugo.ferreira
  */
 abstract class DtoAbstract {
+
+	/**
+	 * vamos fazer essa classe salvar os dados futuramente?
+	 */
+	protected $tableName = null ;
+	protected $idName    = null ;
 
     /**
 	 * caso tenha passado um array de chave => valor com chaves identicas aos atributos declarados no objeto filho
