@@ -4,19 +4,13 @@
  * Crie uma model (objeto DAO) extendendo esta classe para manter seu código limpo, livre de queries e
  * operações de banco de dados.
  *
- * O objetivo desta classe é criar uma interface para a criação de um Data Access Object (DAO)
- * simplificando a camada controladora e otimizando o uso do objeto MDB2 e MDB2->extended
- *
- * é necessário passar a referência do objeto MDB2 no construtor deste método
- *
- * CLASSES AUXILIARES
- * \MDB2\Extended.php
- * \MDB2\Driver\oci8.php
+ * compativel com zend framework 2
  *
  * @author hugo.ferreira
  */
 
 namespace Xlib;
+// use Zend\Db\Adapter\Adapter;
 
 class ModelAbstract {
 
@@ -25,7 +19,6 @@ class ModelAbstract {
      * @var object, precisa ser passado no construtor
      */
     private static $db = null ;
-    private static $dbClass = '' ;
 
     private static $queryHistory = array() ;
     private static $totalExecutionTime = 0 ;
@@ -46,18 +39,7 @@ class ModelAbstract {
         }
     }
 
-
-    /**
-     * Classes de Connectors ($db) aceitos:
-     * 'Zend_Db_Adapter_Mysqli'
-     * 'DB_oci8'
-     * @param type $db3
-     */
     public static function setDB ( $db ) {
-        $class = get_class ( $db );
-        if ( $class !== 'Zend_Db_Adapter_Mysqli' ) throw new Exception ( "Conector inválido: ${class}. esperado: objeto de Zend_Db_Adapter_Mysqli" ) ;
-//pr($class);
-        ModelAbstract::$dbClass = $class ;
         ModelAbstract::$db = $db;
     }
 
@@ -65,75 +47,43 @@ class ModelAbstract {
         return ModelAbstract::$db;
     }
 
-    public static function getDBType ( ) {
-        return ModelAbstract::$dbClass;
-    }
 
-    /**
-     * o uso deste método poderia ser simplificado fazendo uma chamada ao método $db->nextID ();
-     * mas em testes, o valor retornado por nextID() foi sequencial iniciando de 1, desconsiderando
-     * o valor real da sequence. por isso estamos fazendo o trabalho novamente, porém de forma simplificada
-     * @param string $sequenceName nome da sequence
-     * @return integer próximo valor de sequência
-     */
-    // public function getSequenceNextVal ( $sequenceName = null ) {
-    // 	if ( empty ( $sequenceName ) ) throw new Exception( "O nome da sequence está em branco" );
-    //     $query = "SELECT ${sequenceName}.NEXTVAL FROM DUAL";
-    //     $res = (int) $this->getOne($query);
-    //     return $res;
-    // }
-
-    // public function getNextValFromSequencia ( $tableName ) {
-    //     $query = "SELECT ID_ULTIMO_SEQ FROM SEQUENCIA WHERE NM_TABELA_SEQ = '$tableName' ";
-    //     $res = $this->fetchOne ( $query );
-    //     $res++;
-    //     $this->execute ( "UPDATE SEQUENCIA SET ID_ULTIMO_SEQ = '$res' WHERE NM_TABELA_SEQ = '$tableName' " );
-    //     return $res ;
-    // }
-
-    /**
-     * Route executions between MDB2 or DB_oci8 accordly with our current db connector
-     * @param type $method
-     * @param type $query
-     * @throws Exception
-     */
     private function _fetch ( $method , $query , $db = false ) {
 
-//        metodos usados no DB_oci8 (Z:\prodata\Model\MonitoramentoTerminal.php)
-//        $this->db->queryRow()
-//        $this->db->extended->getAssoc()
-//        $this->db->queryAll()
-//        $this->db->query()
-//          DB_Error
         try {
 
             $start_time = microtime ( TRUE ) ;
-
+            $output = array ( );
 			if ( $db === false ) $db = ModelAbstract::$db;
-			$dbClass = ModelAbstract::$dbClass ;
-// pr($db);
 
-            if ( $dbClass === 'Zend_Db_Adapter_Mysqli' ) {
-                // $method = 'fetch' . $method ;
-                switch ($method) {
-                	case 'One':
-		                $res = $db->fetchOne($query);
-            		break;
-                	case 'Row':
-		                $res = $db->fetchRow($query);
-            		break;
-                	case 'All':
-		                $res = $db->fetchAll($query);
-            		break;
-                	default:
-                		die("metodo " . $method . " não implementado na ModelAbstract");
-                }
-                // $res = $db->${method}($query);
-                // if ( get_class ( $res ) === 'MDB2_Error' ) throw new Exception ( $res->message ) ;
-            } else {
-
-                throw new Exception ( "Invalid Db Connector :" . $dbClass ) ;
-
+            switch ($method) {
+            	case 'One':
+					$statement = ModelAbstract::$db->query($query);
+					$res       = $statement->execute();
+					$output    = array ( );
+					$output    = $res->current();
+					$output    = array_shift ( $output );
+        		break;
+            	case 'Row':
+					$statement = ModelAbstract::$db->query($query);
+					$res       = $statement->execute();
+					$output    = array ( );
+					$output    = $res->current();
+        		break;
+            	case 'All':
+					$statement = ModelAbstract::$db->query($query);
+					$res       = $statement->execute();
+					$res->buffer();
+					$output    = array ( );
+					$count     = $res->count() ;
+					for ( $i = 0 ; $i < $count ; $i++ ) {
+						$out      = $res->current();
+						$output[] = $out;
+						$res->next();
+					}
+        		break;
+            	default:
+            		die("method " . $method . " not implemented in ModelAbstract");
             }
 
             ModelAbstract::logQuery ( $query , $start_time , true , '0' , '' , get_class($this) , $db );
@@ -143,104 +93,55 @@ class ModelAbstract {
             ModelAbstract::logQuery ( $query , $start_time , false , 0 , $res->userinfo , get_class ( $this ) , $db );
 
             throw new Exception ( $err->getMessage () ) ;
-            //echo $err->getTraceAsString ( ) ;
+
         }
 
-
-        return $res ;
+        return $output ;
 
     }
 
-    /**
-     * alias para o método getOne
-     * @param string $query query parametrizada (ou não) com '?' nos parâmetros
-     * @param array $bindList array contendo os valores dos parâmetros. pode ser omitido, nesse caso a query será
-     * executada como está. valores NULL nos parâmetros serão respeitados e gravados no banco como NULL
-     */
     public function fetchOne ( $query , array $bindList = array ( ) ) {
         if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList );
-        $result = ModelAbstract::_fetch ( 'Row' , $query );
-        // pr($result);
-        return $result;
+        return ModelAbstract::_fetch ( 'One' , $query );
     }
 
-    /**
-     * alias para o método getAll
-     * @param string $query query parametrizada (ou não) com '?' nos parâmetros
-     * @param array $bindList array contendo os valores dos parâmetros. pode ser omitido, nesse caso a query será
-     * executada como está. valores NULL nos parâmetros serão respeitados e gravados no banco como NULL
-     */
-    public function getAll ( $query , array $bindList = array ( ) , $db = false ){
-        if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList );
-        return ModelAbstract::_fetch ( 'All' , $query , $db );
-    }
-    public function fetchAll ( $query , array $bindList = array ( ) , $db = false ) {
-        return $this->getAll ( $query , $bindList , $db );
-    }
-
-    public function fetchLimit ( $query , $start , $maxRows , array $bindList = array ( ) ) {
-
-        if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList );
-
-        try {
-            $start_time = microtime ( TRUE ) ;
-
-    //        if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
-            // ModelAbstract::$db->setLimit ( $maxRows , $start ) ;
-            $result = ModelAbstract::$db->query ( $query . " LIMIT $start , $maxRows") ;
-
-            // if ( PEAR::isError ( $result ) ) throw new Exception ( $result->userinfo ) ;
-
-            ModelAbstract::logQuery ( $query , $start_time , true , '0' , '' , get_class($this) );
-
-            return $result->fetchAll ( ) ;
-    //        }
-
-        } catch ( Exception $err ) {
-
-            ModelAbstract::logQuery ( $query , $start_time , false , '0' , $err->getMessage() , get_class($this) );
-
-            throw new Exception ( "Erro na consulta. Favor informar o desenvolvedor" ) ;
-            //echo $err->getTraceAsString ( ) ;
-        }
-
-
-    }
-
-
-    /**
-     * alias para o método getRow
-     * @param string $query query parametrizada (ou não) com '?' nos parâmetros
-     * @param array $bindList array contendo os valores dos parâmetros. pode ser omitido, nesse caso a query será
-     * executada como está. valores NULL nos parâmetros serão respeitados e gravados no banco como NULL
-     */
     public function fetchRow ( $query , array $bindList = array ( ) , $db = false ) {
         if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList );
         return ModelAbstract::_fetch ( 'Row' , $query , $db );
     }
 
-    /**
-     * alias para o método getAssoc
-     * @param string $query query parametrizada (ou não) com '?' nos parâmetros
-     * @param array $bindList array contendo os valores dos parâmetros. pode ser omitido, nesse caso a query será
-     * executada como está. valores NULL nos parâmetros serão respeitados e gravados no banco como NULL
-     */
-    public function getAssoc ( $query , array $bindList = array ( ) ){
+    public function fetchAll ( $query , array $bindList = array ( ) , $db = false ){
         if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList );
-        return $this->fetchAssoc ( $query , $bindList );
-//        return ModelAbstract::_fetch ( 'Assoc' , $query );
+        return ModelAbstract::_fetch ( 'All' , $query , $db );
     }
-    public function fetchAssoc ( $query , array $bindList = array ( ) ) {
-        $result = $this->getAll ( $query , $bindList );
-        $result = $this->arrayAssoc ( $result );
-        return $result ;
-    }
-    public function arrayAssoc ( $array ) {
-        $output = array ( );
-        if ( !empty ( $array ) ) foreach ( $array as $res ) {
-            $output[(array_shift($res))] = array_shift($res);
-        }
-        return $output;
+
+    public function fetchLimit ( $query , $start , $maxRows , array $bindList = array ( ) ) {
+
+    //     if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList );
+
+    //     try {
+    //         $start_time = microtime ( TRUE ) ;
+
+    // //        if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
+    //         // ModelAbstract::$db->setLimit ( $maxRows , $start ) ;
+    //         $result = ModelAbstract::$db->query ( $query . " LIMIT $start , $maxRows") ;
+
+    //         // if ( PEAR::isError ( $result ) ) throw new Exception ( $result->userinfo ) ;
+
+    //         ModelAbstract::logQuery ( $query , $start_time , true , '0' , '' , get_class($this) );
+
+    //         return $result->fetchAll ( ) ;
+    // //        }
+
+    //     } catch ( Exception $err ) {
+
+    //         ModelAbstract::logQuery ( $query , $start_time , false , '0' , $err->getMessage() , get_class($this) );
+
+    //         throw new Exception ( "Erro na consulta. Favor informar o desenvolvedor" ) ;
+    //         //echo $err->getTraceAsString ( ) ;
+    //     }
+
+
     }
 
     /**
@@ -255,8 +156,7 @@ class ModelAbstract {
         while ( $pos = strpos ( $query , "?" , $pos ) )  {
             $value = array_shift ( $bindList ) ;
             if ( $value !== null ) {
-                // a função addslashes pode ser substituída por algo mais eficiente caso exista
-                $value = "'" . addslashes ( $value ) . "'" ;
+                $value = "'" . mysql_real_escape_string ( $value ) . "'" ;
             } else {
                 $value = " null " ;
             }
@@ -264,6 +164,11 @@ class ModelAbstract {
             $pos += strlen($value);
         }
         return $query ;
+    }
+
+    public function query ( $query , array $bindList = array ( ) , $db = false ) {
+    	if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList ) ;
+    	return $this->_query ( $query , $db ) ;
     }
 
     /**
@@ -278,14 +183,12 @@ class ModelAbstract {
 
         try {
             $start_time = microtime ( TRUE ) ;
-            if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
-                $res = $db->exec ( $query );
-                if ( get_class ( $res ) === 'MDB2_Error' ) throw new Exception ( $res->message ) ;
-            } else {
-                throw new Exception ( "Invalid Db Connector :" . ModelAbstract::$dbClass ) ;
-            }
+
+			$statement = ModelAbstract::$db->query($query);
+			$res       = $statement->execute();
+
             ModelAbstract::logQuery ( $query , $start_time , true , '0' , '' , get_class($this) , $db );
-            return $res ;
+            return $res->getResource() ;
 
         } catch ( Exception $err ) {
             $errorMessage = $err->getMessage();
@@ -311,7 +214,7 @@ class ModelAbstract {
 
         $output = '<div style="background:#000;color:#0F0;font-size:12px;font-family:courier new;width:95%;padding:10px;" >' .
             '<span style="color:#0F0;font-size:1.3em;">Connection default: ' .
-            strtoupper($db->dsn['username']."@".$db->dsn['hostspec']).
+            // strtoupper($db->dsn['username']."@".$db->dsn['hostspec']).
             '</span>' .
         '</div>' ;
 
@@ -340,41 +243,28 @@ class ModelAbstract {
         return $output ;
     }
 
-    /**
-     * executa uma query com menos burocracia. geralmente se usa este método para executar um INSERT,DELETE ou UPDATE
-     * nada de SELECT.
-     * @param string $query query parametrizada (ou não) com '?' nos parâmetros
-     * @param array $bindList array contendo os valores dos parâmetros. pode ser omitido, nesse caso a query será
-     * executada como está. valores NULL nos parâmetros serão respeitados e gravados no banco como NULL
-     */
-    public function execute ( $query , array $bindList = array ( ) , $db = false ) {
-        if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList ) ;
-        return $this->_query ( $query , $db );
-    }
-    public function query ( $query , array $bindList = array ( ) , $db = false ) {
-    	return $this->execute ( $query , $bindList , $db ) ;
-    }
-
     public function limitQuery ( $query , $start , $linhas ) {
 
-        try {
+die("precisa implementar");
 
-            $start_time = microtime ( TRUE ) ;
+    //     try {
 
-            if ( ModelAbstract::$dbClass === 'DB_oci8' ) {
-                $result = ModelAbstract::$db->limitQuery ( $query , $start , $linhas ) ;
-    //        } else if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
-            } else {
-                throw new Exception ( "Invalid DB Connector" ) ;
-            }
-            ModelAbstract::logQuery ( $query , $start_time , true , $linhas , '' , get_class ( $this ) );
+    //         $start_time = microtime ( TRUE ) ;
 
-            return $result ;
+    //         if ( ModelAbstract::$dbClass === 'DB_oci8' ) {
+    //             $result = ModelAbstract::$db->limitQuery ( $query , $start , $linhas ) ;
+    // //        } else if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
+    //         } else {
+    //             throw new Exception ( "Invalid DB Connector" ) ;
+    //         }
+    //         ModelAbstract::logQuery ( $query , $start_time , true , $linhas , '' , get_class ( $this ) );
 
-        } catch ( Exception $err ) {
-            ModelAbstract::logQuery ( $query , $start , $linhas , '0' , '' , get_class($this) );
-            throw new Exception ( $err->getMessage () ) ;
-        }
+    //         return $result ;
+
+    //     } catch ( Exception $err ) {
+    //         ModelAbstract::logQuery ( $query , $start , $linhas , '0' , '' , get_class($this) );
+    //         throw new Exception ( $err->getMessage () ) ;
+    //     }
 
     }
 
@@ -450,59 +340,63 @@ class ModelAbstract {
     }
 
     public function startTransaction ( ) {
-        try {
-            $start_time = microtime ( TRUE )  ;
 
-            if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
-                return ModelAbstract::$db->beginTransaction();
-            } else {
-                throw new Exception ( "Invalid Db Connector" ) ;
-            }
+    	die ( "precisa ser implementado");
 
-            ModelAbstract::logQuery ( 'START TRANSACTION' , $start_time , true , '0' , '' , get_class($this) );
+        // try {
+        //     $start_time = microtime ( TRUE )  ;
 
-        } catch ( Exception $err ) {
-            throw new Exception ( $err->getMessage () ) ;
-            //echo $err->getTraceAsString ( ) ;
-        }
+        //     if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
+        //         return ModelAbstract::$db->beginTransaction();
+        //     } else {
+        //         throw new Exception ( "Invalid Db Connector" ) ;
+        //     }
+
+        //     ModelAbstract::logQuery ( 'START TRANSACTION' , $start_time , true , '0' , '' , get_class($this) );
+
+        // } catch ( Exception $err ) {
+        //     throw new Exception ( $err->getMessage () ) ;
+        //     //echo $err->getTraceAsString ( ) ;
+        // }
 
 	}
 
 	public function commit ( ) {
+die ( "precisa ser implementado");
+        // try {
+        //     $start_time = microtime ( TRUE )  ;
 
-        try {
-            $start_time = microtime ( TRUE )  ;
+        //     if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
+        //         return ModelAbstract::$db->commit();
+        //     } else {
+        //         throw new Exception ( "Invalid Db Connector" ) ;
+        //     }
 
-            if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
-                return ModelAbstract::$db->commit();
-            } else {
-                throw new Exception ( "Invalid Db Connector" ) ;
-            }
+        //     ModelAbstract::logQuery ( 'COMMIT' , $start_time , true , '0' , '' , get_class($this) );
 
-            ModelAbstract::logQuery ( 'COMMIT' , $start_time , true , '0' , '' , get_class($this) );
-
-        } catch ( Exception $err ) {
-            throw new Exception ( $err->getMessage () ) ;
-            //echo $err->getTraceAsString ( ) ;
-        }
+        // } catch ( Exception $err ) {
+        //     throw new Exception ( $err->getMessage () ) ;
+        //     //echo $err->getTraceAsString ( ) ;
+        // }
 	}
 
 	public function rollback ( ) {
-        try {
-            $start_time = microtime ( TRUE )  ;
+		die ( "precisa ser implementado");
+        // try {
+        //     $start_time = microtime ( TRUE )  ;
 
-            if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
-                return ModelAbstract::$db->rollback();
-            } else {
-                throw new Exception ( "Invalid Db Connector" ) ;
-            }
+        //     if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
+        //         return ModelAbstract::$db->rollback();
+        //     } else {
+        //         throw new Exception ( "Invalid Db Connector" ) ;
+        //     }
 
-            ModelAbstract::logQuery ( 'ROLLBACK' , $start_time , true , '0' , '' , get_class($this) );
+        //     ModelAbstract::logQuery ( 'ROLLBACK' , $start_time , true , '0' , '' , get_class($this) );
 
-        } catch ( Exception $err ) {
-            throw new Exception ( $err->getMessage () ) ;
-            //echo $err->getTraceAsString ( ) ;
-        }
+        // } catch ( Exception $err ) {
+        //     throw new Exception ( $err->getMessage () ) ;
+        //     //echo $err->getTraceAsString ( ) ;
+        // }
 	}
 
     /**
@@ -513,72 +407,70 @@ class ModelAbstract {
      * @throws Exception
      * @return $db armazena em uma variável estática e em seguida retorna
      */
-    public static function connect ( $dsn , $connector = 'Zend_Db_Adapter_Mysqli' ) {
+    public static function connect ( $dsn ) {
+die ( "precisa ser implementado");
 
-        if ( gettype ( $dsn ) === 'string' && strpos ( $dsn , "@" ) > -1 ) {
-            $dsn = ModelAbstract::getDsn ( $dsn ) ;
-        }
 
-        try {
-            $start_time = microtime ( TRUE ) ;
+        // try {
+        //     $start_time = microtime ( TRUE ) ;
 
-            if ( !isset ( $dsn['phptype'] ) ) $dsn['phptype'] = 'oci8';
+        //     if ( !isset ( $dsn['phptype'] ) ) $dsn['phptype'] = 'oci8';
 
-            if ( $connector === 'Zend_Db_Adapter_Mysqli' ) {
+        //     if ( $connector === 'Zend_Db_Adapter_Mysqli' ) {
 
-                $db = MDB2::singleton ( $dsn ) ;
+        //         $db = MDB2::singleton ( $dsn ) ;
 
-                // if ( PEAR::isError ( $db ) ) {
-                //     if ( DEBUG ) pr ( $db );
-                //     throw new Exception ( "Não foi possível conectar" ) ;
-                // }
+        //         // if ( PEAR::isError ( $db ) ) {
+        //         //     if ( DEBUG ) pr ( $db );
+        //         //     throw new Exception ( "Não foi possível conectar" ) ;
+        //         // }
 
-                $db->setOption ( 'persistent' , true ) ;
-                $db->setOption ( 'field_case' , CASE_UPPER ) ;
-                $db->setFetchMode ( MDB2_FETCHMODE_ASSOC ) ;
-                $db->loadModule ( 'Extended' ) ;
+        //         $db->setOption ( 'persistent' , true ) ;
+        //         $db->setOption ( 'field_case' , CASE_UPPER ) ;
+        //         $db->setFetchMode ( MDB2_FETCHMODE_ASSOC ) ;
+        //         $db->loadModule ( 'Extended' ) ;
 
-            }
+        //     }
 
-            ModelAbstract::setDB ( $db ) ;
+        //     ModelAbstract::setDB ( $db ) ;
 
-            ModelAbstract::logQuery ( 'CONNECT' , $start_time , true , '0' , '' , get_class($this) );
+        //     ModelAbstract::logQuery ( 'CONNECT' , $start_time , true , '0' , '' , get_class($this) );
 
-        } catch ( Exception $err ) {
-            ModelAbstract::logQuery ( 'CONNECT' , $start_time , true , '0' , '' , get_class($this) );
-            throw new Exception ( $err->getMessage () ) ;
-        }
+        // } catch ( Exception $err ) {
+        //     ModelAbstract::logQuery ( 'CONNECT' , $start_time , true , '0' , '' , get_class($this) );
+        //     throw new Exception ( $err->getMessage () ) ;
+        // }
 
-        return ModelAbstract::$db ;
+        // return ModelAbstract::$db ;
 
     }
 
-    /**
-     *
-     * @param type $schemaAtDB
-     * @return array
-     * @throws Exception
-     */
-    public static function getDsn ( $schemaAtDB ) {
+    // /**
+    //  *
+    //  * @param type $schemaAtDB
+    //  * @return array
+    //  * @throws Exception
+    //  */
+    // public static function getDsn ( $schemaAtDB ) {
 
-        $schemaAtDB = strtoupper($schemaAtDB);
+    //     $schemaAtDB = strtoupper($schemaAtDB);
 
-        $dsnList = array (
-            'SCHEMA@SERVER' => array(
-                'phptype'  => '',
-                'username' => '',
-                'password' => '',
-                'hostspec' => ''
-            )
-        ) ;
+    //     $dsnList = array (
+    //         'SCHEMA@SERVER' => array(
+    //             'phptype'  => '',
+    //             'username' => '',
+    //             'password' => '',
+    //             'hostspec' => ''
+    //         )
+    //     ) ;
 
-        if ( array_key_exists ( $schemaAtDB , $dsnList ) ) {
-            return $dsnList[$schemaAtDB];
-        } else {
-            throw new Exception ( "Combinação de SCHEMA e DB desconhecida" ) ;
-        }
+    //     if ( array_key_exists ( $schemaAtDB , $dsnList ) ) {
+    //         return $dsnList[$schemaAtDB];
+    //     } else {
+    //         throw new Exception ( "Combinação de SCHEMA e DB desconhecida" ) ;
+    //     }
 
-    }
+    // }
 
     public function __destruct ( ) {
         ModelAbstract::$instances--;

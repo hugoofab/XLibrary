@@ -4,12 +4,20 @@ namespace Xlib;
 
 class Controller {
 
-	protected $isPublic = true ;
+	protected $public = false ;
+	protected $Response ;
 
-	public function preDispatch ( $requestData ) {
+	public function __construct ( ) {
+		$this->Response = new Response();
+	}
+
+	public function preDispatch ( ) {
 
 	}
 
+	public function isPublic ( ) {
+		return $this->public ;
+	}
 		
 }
 

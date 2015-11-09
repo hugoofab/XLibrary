@@ -24,12 +24,17 @@ class Route {
 		for ( $i = 0 ; $i < count ( $defaultRouteArr ) ; $i++ ) {
 			switch ( $defaultRouteArr[$i] ) {
 				case ':module:':		$this->module = $requestRoute[$i]; 			break ;
-				case ':controller:':	$this->controller = $requestRoute[$i]; 		break ;
-				case ':action:':		$this->action = $requestRoute[$i]; 			break ;
+				case ':controller:':	
+					$this->controller = empty ( $requestRoute[$i] ) ? "index" : $requestRoute[$i] ; 		
+				break ;
+				case ':action:':		
+					$this->action = empty ( $requestRoute[$i] ) ? "index" : $requestRoute[$i] ; 			
+				break ;
 				default : throw new Exception ( "Bad route configuration" );
 			}
 		}
-
+// pr($this->controller);
+// pr($this->action);
 		unset ( $i );
 		$key 	= null ;
 		$value 	= null ;
@@ -54,28 +59,27 @@ class Route {
 	public function dispatch ( ) {
 
 		$fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php") or $fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . $this->controller . "Controller.php") ;
-
-		if ( !$fileName ) return $this->error404 ( "Controller not found" ) ;
+		if ( !$fileName ) return $this->error404 ( );
 		
 		require_once ( $fileName );
+		// pr($fileName);
+		// pr($this->controller);
+		
 		$className  = ucwords($this->controller)."Controller";
 		$Controller = new $className();
+		$Controller->preDispatch();
 		$actionName = $this->action . "Action" ;
-		if ( !method_exists ( $Controller , $actionName ) ) return $this->error404 ( "Action not found" ) ;
-		if ( method_exists ( $Controller , "preDispatch" ) ) $Controller->preDispatch ( array ( 'module' => $this->module , 'controller' => $this->controller , 'action' => $this->action ) );
 		$Controller->$actionName();
 
 	}
 
-	public function error404 ( $message = "" ) {
+	public function error404 ( ) {
 		$dump = array (
-			'Message'    => $message ,
-			'Controller' => $this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php" ,
-			'Real Path'  => realpath($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php"),
-			'Action'     => $this->action 
+			'path' => $this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php" ,
+			'realpath' => realpath($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php"),
 		);
 		pr($dump);
-		die ( "página não encontrada: " . $message ) ;
+		die ( "página não encontrada" ) ;
 	}
 
 	public function setModule ( $module ) {

@@ -46,6 +46,11 @@ class Response {
 
     }
 
+    public function flush ( ) {
+    	print $this ;
+    	exit ;
+    }
+
     /**
      * adiciona uma mensagem de feedback para ser capturada na view
      * @param string $feedback  mensagem (text|html) de feedback

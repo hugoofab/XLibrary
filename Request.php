@@ -98,7 +98,7 @@ class Request {
      */
 	public static function addFeedback ( $feedback , $type = "info" , $icon = true , $nameSpace = "defaultNameSpace" ) {
 
-        // $feedback = translateError ( $feedback ) ;
+        $feedback = translateError ( $feedback ) ;
 
         $typeToIcon = array (
             "success"   => "glyphicon-ok-sign" ,

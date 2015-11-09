@@ -9,6 +9,7 @@ class Registry {
 
     public static function set ( $key , $value ) {
     	Registry::$registryArray[Registry::$namespace][$key] = $value ;
+    	return $value ;
     }
 
     public static function get ( $key ) {
