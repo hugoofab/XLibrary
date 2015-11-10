@@ -105,7 +105,7 @@ class KeyGen {
      */
     public function decrypt ( $string , $key = '' ) {
 		return mcrypt_decrypt ( MCRYPT_RIJNDAEL_256 , substr ( base64_encode ( md5 ( base64_encode ( $this->salt ) ) . sha1 ( $key . $this->salt ) ) , 3 , 32 ) , $string , MCRYPT_MODE_CBC , substr ( base64_encode ( md5 ( $this->salt . $key ) . md5 ( $key ) ) , 2 , 32 ) )  ;
-    }
+    }	
 
     public static function hash ( $password , $salt = "" , $algorithm = "sha256" ) {
     	return hash ( "sha256" , base64_encode ( $salt . $password . $salt ) ) ;

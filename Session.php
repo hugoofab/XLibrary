@@ -12,7 +12,7 @@ class Session {
     }
 
     public static function get ( $key ) {
-    	return $_SESSION[Session::$namespace][$key];
+    	return isset ( $_SESSION[Session::$namespace][$key] ) ? $_SESSION[Session::$namespace][$key] : null ;
     }
 
     public static function renew (  ) {
@@ -21,6 +21,14 @@ class Session {
 
     public static function getId ( ) {
     	return session_id ( );
+    }
+
+    public static function rm ( $key = null ) {
+    	if ( !empty ( $key ) ) {
+    		unset ( $_SESSION[Session::$namespace][$key] );
+    	} else {
+    		unset ( $_SESSION );
+    	}
     }
 
 

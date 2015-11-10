@@ -4,10 +4,10 @@ namespace Xlib;
 
 class Response {
 
-    protected $status = 'OK';
-    protected $message = '' ;
-    protected $data = array ( );
-    protected $outputType = 'json' ;
+	protected $status     = 'ok';
+	protected $message    = '' ;
+	protected $data       = array ( );
+	protected $outputType = 'json' ;
 
     public function setType ( $type ) {
         if ( !in_array ( $type , array ( 'json' ) ) ) throw new Exception ( "Tipo desconhecido" ) ;
@@ -22,7 +22,7 @@ class Response {
             }
         }
 
-        $this->status = 'ERROR' ;
+        $this->status = 'error' ;
         $this->message = $error ;
 
     }
@@ -34,9 +34,9 @@ class Response {
     public function __toString (  ) {
 
         $response = array (
-            'STATUS'    => $this->status ,
-            'MESSAGE'   => $this->message ,
-            'DATA'      => $this->data
+            'status'    => $this->status ,
+            'message'   => $this->message ,
+            'data'      => $this->data
         ) ;
 
         switch ( $this->outputType ) {
@@ -117,6 +117,11 @@ class Response {
 
         return $output ;
 
+	}
+
+	public function __destruct ( ) {
+		$feedback = Response::getFeedback ( ) ;
+		if ( !empty ( $feedback ) ) pri ( $feedback ) ;
 	}
 
 }
