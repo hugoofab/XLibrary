@@ -11,6 +11,17 @@ class Session {
     	return $value ;
     }
 
+    public static function push ( $key , $value ) {
+    	if ( !isset($_SESSION[Session::$namespace][$key]) || !is_array ( $_SESSION[Session::$namespace][$key] ) ) $_SESSION[Session::$namespace][$key] = array ( );
+    	$_SESSION[Session::$namespace][$key][] = $value ;
+    	return $value ;
+    }
+
+    public static function pull ( $array , $key ) {
+    	if ( !is_array ( $_SESSION[Session::$namespace][$array] ) ) return null ;
+    	return $_SESSION[Session::$namespace][$array][$key] ;
+    }
+
     public static function get ( $key ) {
     	return isset ( $_SESSION[Session::$namespace][$key] ) ? $_SESSION[Session::$namespace][$key] : null ;
     }

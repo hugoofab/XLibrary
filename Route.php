@@ -38,16 +38,12 @@ class Route {
 		for ( $i = count ( $defaultRouteArr ) ; $i < count ( $requestRoute ) ; $i++ ) {
 			if ( $key === null ) {
 				$key = $requestRoute[$i];
-				Request::set($key,"");
-				continue ;
+				if ( !isset ( $_POST[$key] ) ) Request::set($key,"");
 			} else if ( $value === null ) {
 				$value = $requestRoute[$i];
-				continue ;
-			} else {
-				Request::set($key,$value);
+				if ( !isset ( $_POST[$key] ) ) Request::set($key,$value);
 				$key = $value = null ;
 			}
-
 		}
 
 	}

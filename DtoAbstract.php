@@ -33,7 +33,7 @@ abstract class DtoAbstract {
 
 		$this->reset();
 
-		if ( !empty ( $arrayData ) ) $this->loadFromArray( $arrayData )		;
+		if ( !empty ( $arrayData ) ) $this->loadFromArray( $arrayData );
 
 		$this->init ( );
 
