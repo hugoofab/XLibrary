@@ -14,26 +14,21 @@ class Response {
         $this->outputType = $type ;
     }
 
-    public function setMessage ( $message ) {
-    	$this->message = $message ;
-    	return $this ;
-    }
-
     public function setError ( $error ) {
 
-        if ( gettype ( $error ) === 'object' && method_exists ( $error , 'getMessage' ) ) {
-            $error = $error->getMessage ( );
+        if ( gettype ( $error ) === 'object' ) {
+            if ( method_exists ( $error , 'getMessage' ) ) {
+                $error = $error->getMessage ( );
+            }
         }
 
         $this->status = 'error' ;
         $this->message = $error ;
-        return $this ;
 
     }
 
     public function setData ( $data ) {
         $this->data = $data ;
-        return $this ;
     }
 
     public function __toString (  ) {
@@ -47,6 +42,7 @@ class Response {
         switch ( $this->outputType ) {
             case "json" :  return Json::encode ( $response ) ;
         }
+
 
     }
 
@@ -85,8 +81,6 @@ class Response {
             'icon'      => $icon
 		) ;
 
-		return $this ;
-		
 	}
 	
 	public static function forceUserDownloadByFile ( $filename ) {

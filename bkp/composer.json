@@ -1,0 +1,17 @@
+{
+    "autoload": {
+        "psr-4": {"Xlib\\": "./"}
+    },
+    "name": "hugoofab/xlibrary",
+    "version" : "1.0.0-beta",
+    "description": "Common generic classes useful when you're not using a php framework",
+    "authors": [
+        {
+            "name": "Hugo Fabiano A. Ferreira",
+            "email": "hugoofab@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    }
+}

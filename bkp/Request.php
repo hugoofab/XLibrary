@@ -76,21 +76,6 @@ class Request {
 
 	}
 
-	public static function getArray ( $key , $default = array ( ) ) {
-		$output = Request::get ( $key , $default ) ;
-		if ( empty ( $output ) ) return array ( );
-		if ( !is_array ( $output ) ) return array ( $output );
-		return $output ;
-	}
-
-	public static function getIntArray ( $key , $default = array ( ) ) {
-		$output = Request::get ( $key , $default ) ;
-		if ( empty ( $output ) ) return array ( );
-		if ( !is_array ( $output ) ) return array ( (int) $output );
-		foreach ( $output as &$out ) $out = (int) $out ;
-		return $output ;
-	}
-
     public static function getInt ( $key , $default = 0 ) {
         return (int) preg_replace ( '/[^\d]+/' , '' , Request::get($key,$default) ) ;
     }
