@@ -39,6 +39,29 @@ abstract class DtoAbstract {
 
 	}
 
+	// ainda precisa consertar isso
+	// public function getErrorMessages ( ) {
+		
+	// 	$output = array ( );
+	// 	$paramList = get_object_vars($this);
+
+	// 	if ( !empty ( $paramList ) && is_array ( $paramList ) ) {
+	// 		foreach ( $paramList as $key => $val ) {
+	// 			$method = "validate" . ucwords ( strToLower ( $key ) ) ;
+	// 			if ( method_exists ( $this , $method ) ) {
+	// 				try {
+	// 					$this->{$method}( ) ;
+	// 				} catch (Exception $e) {
+	// 					$output[$key] = $e->getMessage ( ) ;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+
+	// 	return $output ;
+
+	// }
+
 	public function loadFromArray ( $arrayData = array ( ) ) {
 
 		if ( !empty ( $arrayData ) && is_array ( $arrayData ) ) {

@@ -28,4 +28,16 @@ class Validate {
         die ( "Precisa implementar");
     }
 
+    public static function email ( $mail ) {
+    	return filter_var ( $mail , FILTER_VALIDATE_EMAIL ) ;
+    }
+
+    public static function ip ( $ip ) {
+    	filter_var($ip, FILTER_VALIDATE_IP);
+    }
+
+    public static function url ( $url ) {
+    	return preg_match ( "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i" , $url ) ;
+	}
+
 }
