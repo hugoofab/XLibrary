@@ -127,7 +127,7 @@ class Response {
 
 	public function __destruct ( ) {
 		$feedback = Response::getFeedback ( ) ;
-		if ( !empty ( $feedback ) ) pri ( $feedback ) ;
+		// if ( !empty ( $feedback ) ) print ( $feedback ) ;
 	}
 
 }

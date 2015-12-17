@@ -5,6 +5,7 @@ namespace Xlib;
 class Controller {
 
 	protected $Response ;
+	protected $template = null;
 
 	public function __construct ( ) {
 		$this->Response = new Response();
@@ -18,6 +19,19 @@ class Controller {
 
 	public function preDispatch ( ) {
 
+	}
+
+	public function processView ( $view ) {
+		require ( $view );
+	}
+
+	public function setTemplate ( $template ) {
+		$this->template = $template ;
+	}
+	
+	public function getTemplate ( ) {
+		if ( empty ( $this->template ) ) return false ;
+		return realpath ( $this->template );
 	}
 		
 }

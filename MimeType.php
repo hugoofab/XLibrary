@@ -665,4 +665,9 @@ class MimeType {
 		return $output ;
 	}
 
+	public static function getExtByType ( $mimeType ) {
+		foreach ( MimeType::$fullMimetypeList as $ext => $type ) if ( $type === $mimeType ) return $ext;
+		return "";
+	}
+
 }

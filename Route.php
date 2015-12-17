@@ -7,6 +7,7 @@ class Route {
 	protected $defaultRoute    = "/:controller:/:action:/";
 	// protected $defaultRoute = "/:module:/:controller:/:action:/"
 	protected $controllerPath  = "" ;
+	protected $viewPath        = "";
 	protected $module          = "" ;
 	protected $controller      = "Index" ;
 	protected $action          = "index" ;
@@ -48,6 +49,12 @@ class Route {
 
 	}
 
+	/**
+	 * se estiver setado o atributo "template"  na controller, faz o carregamento da mesma
+	 * e incluir a saída da action no atributo $this->actionOutput para ser exibido no template
+	 * se não estiver setado, apenas renderizar a view com os atributos assinados na controller
+	 * @return [type] [description]
+	 */
 	public function dispatch ( ) {
 
 		$fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . ucwords($this->controller) . "Controller.php") or $fileName = realpath($this->controllerPath . DIRECTORY_SEPARATOR . $this->controller . "Controller.php") ;
@@ -61,6 +68,17 @@ class Route {
 		$actionName = $this->action . "Action" ;
 		if ( !method_exists ( $Controller , $actionName ) ) return $this->error404 ( "Action não encontrada" );
 		$Controller->$actionName();
+		if ( $viewFileName = realpath ( $this->viewPath . "/" . strtolower ( $this->controller ) . "/" . $this->action . ".html" ) ) {
+			if ( $templateFileName = $Controller->getTemplate ( ) ) {
+				ob_start();
+				$Controller->processView ( $viewFileName ) ;
+				$this->actionOutput = ob_get_contents();
+				ob_end_clean();
+				require ( $templateFileName );
+			} else {
+				$Controller->processView ( $viewFileName ) ;
+			}
+		}
 
 	}
 
@@ -91,6 +109,10 @@ class Route {
 
 	public function setControllerPath ( $controllerPath ) {
 		$this->controllerPath = $controllerPath ;
+	}
+
+	public function setViewPath ( $viewPath ) {
+		$this->viewPath = $viewPath ;
 	}
 
 }
