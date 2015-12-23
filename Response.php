@@ -69,13 +69,14 @@ class Response {
 			$type     = "danger";
 		}
 
-        $feedback = translateError ( $feedback ) ;
+        // $feedback = translateError ( $feedback ) ;
 
         $typeToIcon = array (
-            "success"   => "glyphicon-ok-sign" ,
-            "info"      => "info-sign",
-            "warning"   => "warning-sign" ,
-            "danger"    => "exclamation-sign"
+			"sucess"  => "glyphicon-ok-sign" ,
+			"success" => "glyphicon-ok-sign" ,
+			"info"    => "info-sign",
+			"warning" => "warning-sign" ,
+			"danger"  => "exclamation-sign"
         ) ;
         if ( $icon === true ) $icon = $typeToIcon[$type];
 
@@ -85,20 +86,18 @@ class Response {
             'icon'      => $icon
 		) ;
 
-		return $this ;
-		
 	}
-	
+
 	public static function forceUserDownloadByFile ( $filename ) {
 		header('Content-Type: application/octet-stream');
-		header("Content-Transfer-Encoding: Binary"); 
+		header("Content-Transfer-Encoding: Binary");
 		header("Content-disposition: attachment; filename=\"" . basename($filename) . "\"");
 		echo readfile($file_url);
 	}
-	
+
 	public static function forceUserDownloadByString ( $fileContent , $filename ) {
 		header('Content-Type: application/octet-stream');
-		header("Content-Transfer-Encoding: Binary"); 
+		header("Content-Transfer-Encoding: Binary");
 		header("Content-disposition: attachment; filename=\"" . $filename . "\"");
 		echo $fileContent;
 	}
@@ -123,11 +122,6 @@ class Response {
 
         return $output ;
 
-	}
-
-	public function __destruct ( ) {
-		$feedback = Response::getFeedback ( ) ;
-		// if ( !empty ( $feedback ) ) print ( $feedback ) ;
 	}
 
 }

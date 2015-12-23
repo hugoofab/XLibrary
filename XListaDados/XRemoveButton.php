@@ -12,14 +12,15 @@ class XRemoveButton extends XButton {
     protected $label            = "" ;
     protected $rowID            = "" ;
     protected $data ;
-    protected $onClick          = "if (!confirm(\"Tem certeza que deseja excluir?\")) return false ;" ;
+    protected $onClick          = "if (!confirm('Tem certeza que deseja excluir?')) return false ;" ;
+    // protected $onClick          = "" ;
     protected $buttonType       = "submit";
     protected $attributes       = array ( );
     protected $hideIf_list      = array ( ) ;
     protected $disableIf_list   = array ( ) ;
     protected $styleIf_list     = array ( ) ;
 
-    public function __construct ( $label , $class = "btn-xs" , $iconClass = "glyphicon glyphicon-remove" ) {
+    public function __construct ( $label = "" , $class = "btn-xs btn-danger" , $iconClass = "glyphicon glyphicon-remove" ) {
         $this->label = $label ;
         $this->elementClass = $class ;
         $this->iconClass = $iconClass ;
@@ -53,7 +54,7 @@ class XRemoveButton extends XButton {
         }
 
         foreach ( $this->attributes as $key => $value ) $attributeSet[$key] = $value ;
-        foreach ( $attributeSet as $key => $value )     $attributeSetString .= " $key=\"$value\"" ;
+        foreach ( $attributeSet as $key => $value )     $attributeSetString .= " $key=\"$value\" " ;
 
         $output =
             "<form method=\"POST\" action=\"\" >" .
@@ -62,7 +63,7 @@ class XRemoveButton extends XButton {
             	"<input type=\"hidden\" name=\"objectKey\" value=\"" . $this->objectKey . "\">" .
             	"<button $attributeSetString>" .
                 	"<span class=\"".$this->iconClass."\" ></span> " .
-                	$this->label ;
+                	$this->label .
 	            "</button>" .
             "</form>"
         ;
@@ -73,20 +74,24 @@ class XRemoveButton extends XButton {
 
     public function process ( ) {
 
-    	if ( !empty ( $_POST['XLLD_Action'] ) || $_POST['XLLD_Action'] !== "remove" ) return false;
+    	if ( !isset ( $_POST['XLLD_Action'] ) ) return false ;
+    	if ( $_POST['XLLD_Action'] !== "remove" ) return false;
     	if ( $_POST['objectKey'] !== $this->objectKey ) return false ;
 
-    	$query = $this->listaDadosRef->getQuery();
+    	$query = $this->getListaDadosRef()->getListaDb()->getRemoveQuery($_POST['rowID']);
 
-    	pr($_POST['rowID']);
+    	try {
 
-    	prd($query);
+	    	if ( !$this->getListaDadosRef()->getListaDb()->query($query) ) throw new Exception ( "Não foi possível excluir" );
 
+	    	\Xlib\Response::addFeedback ( "Excluído com sucesso!" , "success" );
+    	} catch (Exception $e) {
+    		\Xlib\Response::addFeedback ( $e->getMessage() , "danger" ) ;
+    	}
 
-// validar se até aqui tudo ocorreu bem (o objectKey pra ser mais preciso)
-// remover o que esta em $_POST['rowID']
-// para isso, pegar a query do objeto XListaDados que esta em setlistaDadosRef e
-//
+    	header ( "Location: " . $_SERVER['REQUEST_URI']);
+    	exit;
+
     }
 
     public function addHideIf ( $condition ) {

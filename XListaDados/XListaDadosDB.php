@@ -4,20 +4,29 @@ namespace Xlib\XListaDados;
 
 class XListaDadosDB extends \Xlib\ModelAbstract {
 
-	private $queryCount         = null ;
-	private $queryOrder         = '';
-	private $querySelect        = array ( ) ;
-	private $queryFrom          = array ( ) ;
-	private $queryWhere         = array ( ) ;
-	private $queryAdicionais    = array ( ) ;
-    private $queryGroup         = array ( ) ;
-    private $queryJoin          = '';
-    private $mainQuery 			= null ;
-    private $queryResult 		= null ;
+	private $queryCount      = null ;
+	private $queryOrder      = '';
+	private $querySelect     = array ( ) ;
+	private $queryFrom       = array ( ) ;
+	private $queryWhere      = array ( ) ;
+	private $queryAdicionais = array ( ) ;
+	private $queryGroup      = array ( ) ;
+	private $primaryKeyField = "";
+	private $queryJoin       = '';
+	private $mainQuery       = null ;
+	private $queryResult     = null ;
 
 //	public function init ( ){
 //
 //	}
+
+	public function setPrimaryKeyField($primaryKeyField){
+		$this->primaryKeyField = $primaryKeyField;
+	}
+
+	public function getPrimaryKeyField ( ) {
+		return $this->primaryKeyField ( ) ;
+	}
 
 	public function setQueryCount($queryCount){
 		$this->queryCount = $queryCount;
@@ -171,6 +180,29 @@ class XListaDadosDB extends \Xlib\ModelAbstract {
 		$this->mainQuery = stripslashes ( $query ) ;
 
 		return $this->mainQuery ;
+
+	}
+
+	public function getRemoveQuery ( $id ) {
+
+		if ( empty ( $this->primaryKeyField ) ) throw new Exception ( "Primary key field is not defined" );
+
+		/* Monta Query */
+		$query = "DELETE FROM " . implode ( ", \n\t" , $this->queryFrom ) . "\n" . $this->queryJoin ;
+		$queryWhere = $this->queryWhere ;
+		$queryWhere[] = " $this->primaryKeyField = $id ";
+
+		$query .= "\nWHERE " . implode ( " \nAND " , $queryWhere ) ;
+
+		$query .= implode ( " " , $this->queryAdicionais ) ;
+
+        /* Adiciona a Ordem */
+        // if ( !empty ( $this->queryGroup ) ) $query .= " \n\nGROUP BY " . implode ( ", \n" , $this->queryGroup ) ;
+        // if ( !empty ( $this->queryOrder ) ) $query .= " \nORDER BY " . $this->queryOrder ;
+
+		// $this->mainQuery = stripslashes ( $query ) ;
+
+		return $query ;
 
 	}
 

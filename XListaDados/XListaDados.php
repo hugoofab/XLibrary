@@ -100,6 +100,7 @@ protected $ListaDadosDisplay      = null ;
      * @return type
      */
     public function selectID ( $querySelect , $alias = false , $align = null , $nowrap = null , $nvl = false , $formatNumber = "N" ) { //$nvl = " "
+    	$this->listaDb->setPrimaryKeyField ( $querySelect );
         return $this->_select ( $querySelect , $alias , $align , $nowrap , $nvl , $formatNumber , 'A' ) ;
     }
 
@@ -789,8 +790,12 @@ protected $ListaDadosDisplay      = null ;
 
     public function processButtons ( ) {
 
-    	foreach ( $this->buttons[$colCaption] as $colCaption => $Button ) {
-    		$Button->process ( )
+    	foreach ( $this->buttons as $Button ) {
+    		try {
+	    		$Button[0]->process ( );
+    		} catch (Exception $e) {
+    			pr($e->getMessage());
+    		}
     	}
 
     }
@@ -804,7 +809,6 @@ protected $ListaDadosDisplay      = null ;
         try {
 
         	$this->processButtons ( ) ;
-
 
             $smarty_ListaDados = new XSmarty();
 
