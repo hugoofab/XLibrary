@@ -7,17 +7,19 @@ class XButton {
     protected $elementId ;
     protected $elementClass ;
     protected $iconClass ;
-    protected $style ;
-    protected $cellParams       = array ( ) ;
-    protected $label            = "" ;
-    protected $rowID            = "" ;
-    protected $data ;
-    protected $onClick          = "" ;
-    protected $buttonType       = "button";
-    protected $attributes       = array ( );
-    protected $hideIf_list      = array ( ) ;
-    protected $disableIf_list   = array ( ) ;
-    protected $styleIf_list     = array ( ) ;
+	protected $style ;
+	protected $cellParams     = array ( ) ;
+	protected $label          = "" ;
+	protected $rowID          = "" ;
+	protected $data ;
+	protected $objectKey      = null ;
+	protected $listaDadosRef  = null ;
+	protected $onClick        = "" ;
+	protected $buttonType     = "button";
+	protected $attributes     = array ( );
+	protected $hideIf_list    = array ( ) ;
+	protected $disableIf_list = array ( ) ;
+	protected $styleIf_list   = array ( ) ;
 
     public function __construct ( $label , $class = "" , $iconClass = "" ) {
         $this->label = $label ;
@@ -28,6 +30,10 @@ class XButton {
     public static function getInstance ( $label , $class = "" , $iconClass = "" ) {
         $instance = new Xlib_XListaDados_XButton ( $label , $class , $iconClass ) ;
         return $instance ;
+    }
+
+    public function setObjectKey ( $objKey ) {
+    	$this->objectKey = $objKey ;
     }
 
     public function __toString ( ) {
@@ -63,6 +69,14 @@ class XButton {
         ;
 
         return $output;
+
+    }
+
+    /**
+     * @todo capacidade de se passar uma função anônima para ser processada.
+     * @return [type] [description]
+     */
+    public function process ( ) {
 
     }
 
@@ -131,6 +145,15 @@ class XButton {
     public function setAttribute ( $key , $value = "" ) {
         $this->attributes[$key] = $value;
         return $this;
+    }
+
+    public function setlistaDadosRef ( $obj ) {
+    	$this->listaDadosRef = $obj ;
+    	return $this ;
+    }
+
+    public function getlistaDadosRef ( ) {
+    	return $this->listaDadosRef ;
     }
 
 }

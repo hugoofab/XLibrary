@@ -116,6 +116,9 @@ protected $ListaDadosDisplay      = null ;
             // if ( get_class ( $button ) !== '\Xlib\XListaDados\XButton' ) throw new \Exception ( "Botão deve ser uma instancia de \Xlib\XListaDados\XButton" ) ;
             if ( !is_a ( $button , '\Xlib\XListaDados\XButton' ) ) throw new \Exception ( "Botão deve ser uma instancia de \Xlib\XListaDados\XButton" ) ;
 
+            $objectKey = md5 ( serialize ( $this ) . serialize ( $button ) ) ;
+            $button->setObjectKey ( $objectKey );
+            $button->setlistaDadosRef ( $this );
             $this->buttons[$colCaption][] = $button ;
 
         }
@@ -784,6 +787,14 @@ protected $ListaDadosDisplay      = null ;
         }
     }
 
+    public function processButtons ( ) {
+
+    	foreach ( $this->buttons[$colCaption] as $colCaption => $Button ) {
+    		$Button->process ( )
+    	}
+
+    }
+
     public function __toString ( ) {
         return $this->display();
     }
@@ -791,6 +802,9 @@ protected $ListaDadosDisplay      = null ;
 	public function display() {
 
         try {
+
+        	$this->processButtons ( ) ;
+
 
             $smarty_ListaDados = new XSmarty();
 

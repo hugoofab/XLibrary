@@ -59,7 +59,7 @@ class XRemoveButton extends XButton {
             "<form method=\"POST\" action=\"\" >" .
             	"<input type=\"hidden\" name=\"XLLD_Action\" value=\"remove\">" .
             	"<input type=\"hidden\" name=\"rowID\" value=\"" . $this->rowID . "\">" .
-            	"<input type=\"hidden\" name=\"key\" value=\"" . md5 ( serialize ( $this ) ) . "\">" .
+            	"<input type=\"hidden\" name=\"objectKey\" value=\"" . $this->objectKey . "\">" .
             	"<button $attributeSetString>" .
                 	"<span class=\"".$this->iconClass."\" ></span> " .
                 	$this->label ;
@@ -69,6 +69,24 @@ class XRemoveButton extends XButton {
 
         return $output;
 
+    }
+
+    public function process ( ) {
+
+    	if ( !empty ( $_POST['XLLD_Action'] ) || $_POST['XLLD_Action'] !== "remove" ) return false;
+    	if ( $_POST['objectKey'] !== $this->objectKey ) return false ;
+
+    	$query = $this->listaDadosRef->getQuery();
+
+    	pr($_POST['rowID']);
+
+    	prd($query);
+
+
+// validar se até aqui tudo ocorreu bem (o objectKey pra ser mais preciso)
+// remover o que esta em $_POST['rowID']
+// para isso, pegar a query do objeto XListaDados que esta em setlistaDadosRef e
+//
     }
 
     public function addHideIf ( $condition ) {
