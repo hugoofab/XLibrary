@@ -2,7 +2,7 @@
 
 namespace Xlib\XListaDados;
 
-class XButton {
+class XRemoveButton extends XButton {
 
     protected $elementId ;
     protected $elementClass ;
