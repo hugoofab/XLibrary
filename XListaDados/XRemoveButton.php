@@ -12,8 +12,8 @@ class XRemoveButton extends XButton {
     protected $label            = "" ;
     protected $rowID            = "" ;
     protected $data ;
-    protected $onClick          = "" ;
-    protected $buttonType       = "button";
+    protected $onClick          = "if (!confirm(\"Tem certeza que deseja excluir?\")) return false ;" ;
+    protected $buttonType       = "submit";
     protected $attributes       = array ( );
     protected $hideIf_list      = array ( ) ;
     protected $disableIf_list   = array ( ) ;
@@ -56,10 +56,15 @@ class XRemoveButton extends XButton {
         foreach ( $attributeSet as $key => $value )     $attributeSetString .= " $key=\"$value\"" ;
 
         $output =
-            "<button $attributeSetString>" .
-                "<span class=\"".$this->iconClass."\" ></span> " .
-                $this->label ;
-            "</button>"
+            "<form method=\"POST\" action=\"\" >" .
+            	"<input type=\"hidden\" name=\"act\" value=\"remove\">" .
+            	"<input type=\"hidden\" name=\"rowID\" value=\"" . $this->rowID . "\">" .
+            	"<input type=\"hidden\" name=\"key\" value=\"" . md5 ( serialize ( $this ) ) . "\">" .
+            	"<button $attributeSetString>" .
+                	"<span class=\"".$this->iconClass."\" ></span> " .
+                	$this->label ;
+	            "</button>" .
+            "</form>"
         ;
 
         return $output;
