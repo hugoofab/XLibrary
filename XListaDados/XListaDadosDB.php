@@ -1,6 +1,8 @@
 <?php
 
-class XListaDadosDB extends ModelAbstract {
+namespace Xlib\XListaDados;
+
+class XListaDadosDB extends \Xlib\ModelAbstract {
 
 	private $queryCount         = null ;
 	private $queryOrder         = '';

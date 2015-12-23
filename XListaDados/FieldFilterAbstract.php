@@ -1,6 +1,8 @@
 <?php
 
-abstract class Xlib_XListaDados_FieldFilterAbstract {
+namespace Xlib\XListaDados;
+
+abstract class FieldFilterAbstract {
 
 //    (
 //        UPPER ( TRANSLATE ( CAMPO_DA_TABELA , 'ãõÃÕüÜâêîôûÂÊÎÔÛçÀàáéíóúÇÁÉÍÓÍÚ' , 'aoAOuUaeiouAEIOUcAaaeiouCAEIOU' ) )

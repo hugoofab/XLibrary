@@ -1,4 +1,7 @@
 <?php
+
+namespace Xlib\XListaDados;
+
 class XSmarty {
 
 	private 		$session ;
@@ -90,7 +93,7 @@ class XSmarty {
 	 * */
 	public function display( $template = "" , $enableUserMessages = true ){
 
-		$this->assign ( 'DISPLAY_ID' 	, Smarty2::$DISPLAY_ID++ ) ;
+		$this->assign ( 'DISPLAY_ID' 	, XSmarty::$DISPLAY_ID++ ) ;
         
 		if ( $template == "" ) {
             $template =  'tpl/' . basename ( basename ( $_SERVER['SCRIPT_FILENAME'] ) , ".php" ) . ".phtml" ;

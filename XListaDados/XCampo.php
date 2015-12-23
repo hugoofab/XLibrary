@@ -1,5 +1,7 @@
 <?php
 
+namespace Xlib\XListaDados;
+
 class XCampo{	
 	
 	private $tipoSaida;

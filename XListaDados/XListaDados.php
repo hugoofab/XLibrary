@@ -1,5 +1,7 @@
 <?php
 
+namespace Xlib\XListaDados;
+
 class XListaDados {
 
 /**
@@ -48,7 +50,7 @@ protected $ListaDadosDisplay      = null ;
 		$this->listaDb = new XListaDadosDB ( $db );
 
         $this->id = 'GRID' . substr ( md5 ( $_SERVER['SCRIPT_FILENAME'] ) , 0 , 6 ) . "_" . XListaDados::$instanceCount++ ;
-        $this->filtersName = $this->id . Xlib_XListaDados_FieldFilterAbstract::getFiltersGlobalID ( ) ;
+        $this->filtersName = $this->id . \Xlib\XListaDados\FieldFilterAbstract::getFiltersGlobalID ( ) ;
 //        $this->setComboPagina(true );
 	}
 
@@ -111,7 +113,7 @@ protected $ListaDadosDisplay      = null ;
         }
 
         foreach ( $buttonList as $button ) {
-            if ( get_class ( $button ) !== 'Xlib_XListaDados_XButton' ) throw new Exception ( "Botão deve ser uma instancia de Xlib_XListaDados_XButton" ) ;
+            if ( get_class ( $button ) !== '\Xlib\XListaDados\XButton' ) throw new Exception ( "Botão deve ser uma instancia de \Xlib\XListaDados\XButton" ) ;
 
             $this->buttons[$colCaption][] = $button ;
 
@@ -124,7 +126,7 @@ protected $ListaDadosDisplay      = null ;
      *
      * @param type $filter
      */
-    public function addFilter ( Xlib_XListaDados_FieldFilterAbstract $filter , Array $rules = array ( ) ) {
+    public function addFilter ( \Xlib\XListaDados\FieldFilterAbstract $filter , Array $rules = array ( ) ) {
         if ( in_array ( 'MANDATORY', $rules ) ) {
             $filter->setMandatory ( true ) ;
             $this->flagHasMandatoryFilter = true ;
@@ -219,7 +221,7 @@ protected $ListaDadosDisplay      = null ;
      * Objeto que irá formatar o campo
      * @param FieldFormatterAbstract $formatter
      */
-    public function setFormatter ( Xlib_XListaDados_FieldFormatterAbstract $formatter ) {
+    public function setFormatter ( \Xlib\XListaDados\FieldFormatterAbstract $formatter ) {
         $offset = count ( $this->campos ) - 1 ;
         if ( $offset < 0 ) throw new Exception ( "Faça select de ao menos um campo" ) ;
         $key = $this->campos[$offset]->getNome();
@@ -701,6 +703,9 @@ protected $ListaDadosDisplay      = null ;
 	} // retorna o numero de paginas que serão paginadas
 
 	public function setFiltrosOrdem(){
+    	
+    	$orderCampo = "";
+    	$orderTipo = "";
 
 		if ( isset ( $_GET['orderCampo' . $this->id] ) ) {
 
@@ -717,12 +722,13 @@ protected $ListaDadosDisplay      = null ;
                 }
             }
             if ( $campoEncontrado ) $this->listaDb->setQueryOrder ( $orderCampo , $orderTipo ) ;
-        } else {
+        } else if ( !empty ( $this->getCampos () ) ) {
             foreach ( $this->getCampos () as $campo ) {
                 if ( $campo->getOrder () === '' ) continue ;
                 $orderCampo = $campo->getNome () ;
                 $orderTipo = $campo->getOrder () ;
             }
+
             if ( $orderCampo && $orderTipo ) $this->listaDb->setQueryOrder ( $orderCampo , $orderTipo ) ;
         }
 
@@ -787,10 +793,12 @@ protected $ListaDadosDisplay      = null ;
 
             $smarty_ListaDados = new XSmarty();
 
+			$dadosTabela = array ( );
+			
             $this->applyFilters ( );
 
 			$whereList = $this->listaDb->getWhereList ( ) ;
-			if ( empty ( $whereList ) && $this->filterRequired ) throw new Xlib_XListaDados_Exception_EmptySearchFilter ( "Favor forne&ccedil;a ao menos um argumento de busca " );
+			if ( empty ( $whereList ) && $this->filterRequired ) throw new \Xlib\XListaDados\Exception_EmptySearchFilter ( "Favor forne&ccedil;a ao menos um argumento de busca " );
 
             if ( !empty ( $this->permission ) && !$this->hasPermission ( ) ) {
                 $message = "Desculpe, você não tem permissão suficiente para acessar o recurso solicitado." ;
@@ -826,7 +834,7 @@ protected $ListaDadosDisplay      = null ;
             $linha=0;
             $checkboxValues=  array();
 
-            foreach ( $this->dadosQuery as $registro ) {
+            if ( !empty ( $this->dadosQuery ) ) foreach ( $this->dadosQuery as $registro ) {
 
             	$url = '' ;
                 if ( sizeof ( $this->checkbox ) != 0 ) {
@@ -919,7 +927,7 @@ protected $ListaDadosDisplay      = null ;
             $smarty_ListaDados->assign("optionsComboPagina",$optionsComboPagina);
             $smarty_ListaDados->assign('comboPagina',$this->comboPagina);
             $smarty_ListaDados->assign('UsaBackgroundIndex',$this->UsaBackgroundIndex);
-            $smarty_ListaDados->assign ( 'query' , ModelAbstract::queryBeautifier ( $this->getQuery ( ) ) ) ;
+            $smarty_ListaDados->assign ( 'query' , \Xlib\ModelAbstract::queryBeautifier ( $this->getQuery ( ) ) ) ;
 
 
             //$smarty_ListaDados->assign("corTrue",COR_TRUE);
@@ -947,7 +955,7 @@ protected $ListaDadosDisplay      = null ;
 
             $smarty_ListaDados->assign("createPageLink", $this->createPageLink);	// link da página de inserir registro caso não tenha sido encontrado nenhum
 
-            $db = ModelAbstract::getDB () ;
+            $db = \Xlib\ModelAbstract::getDB () ;
 
             $pagina = $_SERVER['REQUEST_URI'] ;
 
@@ -1020,7 +1028,7 @@ $javas =
             $this->ListaDadosDisplay = $ListaDadosDisplay;
             return $this->ListaDadosDisplay;
 
-        } catch ( Xlib_XListaDados_Exception_EmptySearchFilter $err ) {
+        } catch ( \Xlib\XListaDados\Exception_EmptySearchFilter $err ) {
 
         	$smarty_ListaDados->assign ( 'mensagem' , $err->getMessage ( ) ) ;
             return $smarty_ListaDados->getDisplay(dirname(__file__)."/view/XListaDadosEmpty.phtml");
