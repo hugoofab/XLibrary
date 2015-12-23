@@ -107,7 +107,7 @@ protected $ListaDadosDisplay      = null ;
     public function addRemoveButton ( $label = "" , $class = "btn-xs btn-danger" , $iconClass = "glyphicon glyphicon-remove" ) {
 
     	$removeButton = new XRemoveButton ( $label , $class , $iconClass ) ;
-    	$this->addButton ( $removeButton );
+    	return $this->addButton ( $removeButton );
 
     }
 
