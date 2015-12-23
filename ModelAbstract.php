@@ -116,30 +116,37 @@ class ModelAbstract {
     }
 
     public function fetchLimit ( $query , $start , $maxRows , array $bindList = array ( ) ) {
+		
+		// a linha abaixo é uma solução paleativa
+		if ( $start < 0 ) $start = 0 ;
 
-    //     if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList );
+        if ( !empty ( $bindList ) ) $query = $this->bind ( $query , $bindList );
 
-    //     try {
-    //         $start_time = microtime ( TRUE ) ;
+        try {
+        	
+            $start_time = microtime ( TRUE ) ;
+			$statement = ModelAbstract::$db->query ( $query . " LIMIT $start , $maxRows" );
+			$res       = $statement->execute();
+			$res->buffer();
+			$output    = array ( );
+			$count     = $res->count() ;
+			for ( $i = 0 ; $i < $count ; $i++ ) {
+				$out      = $res->current();
+				$output[] = $out;
+				$res->next();
+			}
 
-    // //        if ( ModelAbstract::$dbClass === 'Zend_Db_Adapter_Mysqli' ) {
-    //         // ModelAbstract::$db->setLimit ( $maxRows , $start ) ;
-    //         $result = ModelAbstract::$db->query ( $query . " LIMIT $start , $maxRows") ;
+			return $output ;
 
-    //         // if ( PEAR::isError ( $result ) ) throw new Exception ( $result->userinfo ) ;
+            ModelAbstract::logQuery ( $query , $start_time , true , '0' , '' , get_class($this) );
 
-    //         ModelAbstract::logQuery ( $query , $start_time , true , '0' , '' , get_class($this) );
+        } catch ( Exception $err ) {
 
-    //         return $result->fetchAll ( ) ;
-    // //        }
+            ModelAbstract::logQuery ( $query , $start_time , false , '0' , $err->getMessage() , get_class($this) );
 
-    //     } catch ( Exception $err ) {
-
-    //         ModelAbstract::logQuery ( $query , $start_time , false , '0' , $err->getMessage() , get_class($this) );
-
-    //         throw new Exception ( "Erro na consulta. Favor informar o desenvolvedor" ) ;
-    //         //echo $err->getTraceAsString ( ) ;
-    //     }
+            throw new Exception ( "Erro na consulta. Favor informar o desenvolvedor" ) ;
+            //echo $err->getTraceAsString ( ) ;
+        }
 
 
     }
