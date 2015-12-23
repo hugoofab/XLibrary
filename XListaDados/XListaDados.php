@@ -104,6 +104,13 @@ protected $ListaDadosDisplay      = null ;
         return $this->_select ( $querySelect , $alias , $align , $nowrap , $nvl , $formatNumber , 'A' ) ;
     }
 
+    public function addRemoveButton ( $label = "" , $class = "btn-xs btn-danger" , $iconClass = "glyphicon glyphicon-remove" ) {
+
+    	$removeButton = new XRemoveButton ( $label , $class , $iconClass ) ;
+    	$this->addButton ( $removeButton );
+
+    }
+
     public function addButton ( $buttonList ) {
 
         $colCaption = "EMPTYCOL" . count ( $this->campos ) ;
