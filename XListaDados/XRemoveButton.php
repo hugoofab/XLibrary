@@ -57,7 +57,7 @@ class XRemoveButton extends XButton {
 
         $output =
             "<form method=\"POST\" action=\"\" >" .
-            	"<input type=\"hidden\" name=\"act\" value=\"remove\">" .
+            	"<input type=\"hidden\" name=\"XLLD_Action\" value=\"remove\">" .
             	"<input type=\"hidden\" name=\"rowID\" value=\"" . $this->rowID . "\">" .
             	"<input type=\"hidden\" name=\"key\" value=\"" . md5 ( serialize ( $this ) ) . "\">" .
             	"<button $attributeSetString>" .
