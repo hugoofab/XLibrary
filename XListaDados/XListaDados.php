@@ -113,7 +113,8 @@ protected $ListaDadosDisplay      = null ;
         }
 
         foreach ( $buttonList as $button ) {
-            if ( get_class ( $button ) !== '\Xlib\XListaDados\XButton' ) throw new Exception ( "Botão deve ser uma instancia de \Xlib\XListaDados\XButton" ) ;
+            // if ( get_class ( $button ) !== '\Xlib\XListaDados\XButton' ) throw new \Exception ( "Botão deve ser uma instancia de \Xlib\XListaDados\XButton" ) ;
+            if ( !is_a ( $button , '\Xlib\XListaDados\XButton' ) ) throw new \Exception ( "Botão deve ser uma instancia de \Xlib\XListaDados\XButton" ) ;
 
             $this->buttons[$colCaption][] = $button ;
 
@@ -703,7 +704,7 @@ protected $ListaDadosDisplay      = null ;
 	} // retorna o numero de paginas que serão paginadas
 
 	public function setFiltrosOrdem(){
-    	
+
     	$orderCampo = "";
     	$orderTipo = "";
 
@@ -794,7 +795,7 @@ protected $ListaDadosDisplay      = null ;
             $smarty_ListaDados = new XSmarty();
 
 			$dadosTabela = array ( );
-			
+
             $this->applyFilters ( );
 
 			$whereList = $this->listaDb->getWhereList ( ) ;

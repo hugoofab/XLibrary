@@ -19,7 +19,7 @@ class XRemoveButton extends XButton {
     protected $disableIf_list   = array ( ) ;
     protected $styleIf_list     = array ( ) ;
 
-    public function __construct ( $label , $class = "" , $iconClass = "" ) {
+    public function __construct ( $label , $class = "" , $iconClass = "glyphicon glyphicon-remove" ) {
         $this->label = $label ;
         $this->elementClass = $class ;
         $this->iconClass = $iconClass ;
