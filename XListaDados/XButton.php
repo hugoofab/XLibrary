@@ -28,7 +28,7 @@ class XButton {
     }
 
     public static function getInstance ( $label , $class = "" , $iconClass = "" ) {
-        $instance = new Xlib_XListaDados_XButton ( $label , $class , $iconClass ) ;
+        $instance = new XButton ( $label , $class , $iconClass ) ;
         return $instance ;
     }
 
