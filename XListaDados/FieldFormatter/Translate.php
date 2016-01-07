@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_Translate extends Xlib_XListaDados_FieldFormatterAbstract {
+namespace Xlib\XListaDados\FieldFormatter;
+
+class Translate extends \Xlib\XListaDados\FieldFormatterAbstract {
 
 	protected $translateArray = array ( ) ;
 
