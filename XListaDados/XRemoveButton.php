@@ -19,11 +19,14 @@ class XRemoveButton extends XButton {
     protected $hideIf_list      = array ( ) ;
     protected $disableIf_list   = array ( ) ;
     protected $styleIf_list     = array ( ) ;
+    protected $query = "";
 
-    public function __construct ( $label = "" , $class = "btn-xs btn-danger" , $iconClass = "glyphicon glyphicon-remove" ) {
-        $this->label = $label ;
-        $this->elementClass = $class ;
-        $this->iconClass = $iconClass ;
+    public function __construct ( $label = "" , $class = "btn-xs btn-danger" , $iconClass = "glyphicon glyphicon-remove" , $query = "" ) {
+		$this->label        = $label ;
+		$this->elementClass = $class ;
+		$this->iconClass    = $iconClass ;
+		if ( !empty ( $query ) && !strpos ( $query , "?" ) ) throw new Exception ( "É necessário ter um placeholder \"?\" para o id do registro" );
+		$this->query        = $query ;
     }
 
     public static function getInstance ( $label , $class = "" , $iconClass = "" ) {
@@ -78,11 +81,16 @@ class XRemoveButton extends XButton {
     	if ( $_POST['XLLD_Action'] !== "remove" ) return false;
     	if ( $_POST['objectKey'] !== $this->objectKey ) return false ;
 
-    	$query = $this->getListaDadosRef()->getListaDb()->getRemoveQuery($_POST['rowID']);
+
+    	if ( empty ( $this->query ) ) {
+	    	$query = $this->getListaDadosRef()->getListaDb()->getRemoveQuery($_POST['rowID']);
+    	} else {
+    		$query = $this->getListaDadosRef()->getListaDb()->bind( $this->query , array ( $_POST['rowID'] ) );
+    	}
 
     	try {
 
-	    	if ( !$this->getListaDadosRef()->getListaDb()->query($query) ) throw new Exception ( "Não foi possível excluir" );
+	    	if ( !$this->getListaDadosRef()->getListaDb()->query($query) ) throw new \Exception ( "Não foi possível excluir" );
 
 	    	\Xlib\Response::addFeedback ( "Excluído com sucesso!" , "success" );
     	} catch (Exception $e) {
