@@ -1,7 +1,9 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_Prefix extends Xlib_XListaDados_FieldFormatterAbstract {
-    
+namespace Xlib\XListaDados\FieldFormatter;
+
+class Prefix extends \Xlib\XListaDados\FieldFormatterAbstract {
+
     protected $prefix = "";
     
     public function __construct ( $prefix ) {

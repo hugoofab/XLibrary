@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_Sufix extends Xlib_XListaDados_FieldFormatterAbstract {
+namespace Xlib\XListaDados\FieldFormatter;
+
+class Sufix extends \Xlib\XListaDados\FieldFormatterAbstract {
     
     protected $sufix = "";
     

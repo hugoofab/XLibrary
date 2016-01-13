@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_ColorByValue extends Xlib_XListaDados_FieldFormatterAbstract {
+namespace Xlib\XListaDados\FieldFormatter;
+
+class ColorByValue extends \Xlib\XListaDados\FieldFormatterAbstract {
 
 	protected $colorByValueArray = array ( ) ;
 

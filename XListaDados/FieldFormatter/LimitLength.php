@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_LimitLength extends Xlib_XListaDados_FieldFormatterAbstract {
+namespace Xlib\XListaDados\FieldFormatter;
+
+class LimitLength extends \Xlib\XListaDados\FieldFormatterAbstract {
 
     private $limit ;
     protected static $callId = 0 ;
@@ -24,7 +26,7 @@ class Xlib_XListaDados_FieldFormatter_LimitLength extends Xlib_XListaDados_Field
 
     private function limitStringByCharLen ( $string , $charLen ) {
         $limitedData = substr ( $string , 0 , $charLen ) ;
-        Xlib_XListaDados_FieldFormatter_LimitLength::$callId++;
+        self::$callId++;
 
         return "<span style=\"cursor:help;\" title=\"" . $string . "\" >" . $limitedData . "...</span>" ;
 //        "<script>\n" .

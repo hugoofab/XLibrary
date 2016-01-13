@@ -1,7 +1,9 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_Enclose extends Xlib_XListaDados_FieldFormatterAbstract {
-    
+namespace Xlib\XListaDados\FieldFormatter;
+
+class Enclose extends \Xlib\XListaDados\FieldFormatterAbstract {
+
     protected $tagName = "";
     protected $attributeAsString = "";
     

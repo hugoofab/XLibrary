@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_PregReplace extends Xlib_XListaDados_FieldFormatterAbstract {
+namespace Xlib\XListaDados\FieldFormatter;
+
+class PregReplace extends \Xlib\XListaDados\FieldFormatterAbstract {
 
 	private $ereg ;
 	private $replace ;

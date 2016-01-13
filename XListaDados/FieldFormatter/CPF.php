@@ -1,9 +1,11 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_CPF extends Xlib_XListaDados_FieldFormatterAbstract {
+namespace Xlib\XListaDados\FieldFormatter;
+
+class CPF extends \Xlib\XListaDados\FieldFormatterAbstract {
 
     public function getInstance ( ) {
-        return new Xlib_XListaDados_FieldFormatter_CPF ;
+        return new CPF ;
     }
 
     public function format ( $dataIn ) {

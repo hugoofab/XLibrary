@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_Bold extends Xlib_XListaDados_FieldFormatterAbstract {
+namespace Xlib\XListaDados\FieldFormatter;
+
+class Bold extends \Xlib\XListaDados\FieldFormatterAbstract {
     
     public function format ( $dataIn ) {
         return "<strong>" . $dataIn . "</strong>";

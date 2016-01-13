@@ -1,11 +1,13 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_Money extends Xlib_XListaDados_FieldFormatterAbstract {
-    
+namespace Xlib\XListaDados\FieldFormatter;
+
+class Money extends \Xlib\XListaDados\FieldFormatterAbstract {
+
     private $symbol = "R$ ";
     
     public function getInstance ( ) {
-        return new Xlib_XListaDados_FieldFormatter_Money ;
+        return new self ;
     }
         
     

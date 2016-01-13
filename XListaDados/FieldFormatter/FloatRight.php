@@ -1,7 +1,9 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_FloatRight extends Xlib_XListaDados_FieldFormatterAbstract {
-    
+namespace Xlib\XListaDados\FieldFormatter;
+
+class FloatRight extends \Xlib\XListaDados\FieldFormatterAbstract {
+
     public function format ( $dataIn ) {
         return "<div style=\"float:right;\">" . $dataIn . "</div>";
     }

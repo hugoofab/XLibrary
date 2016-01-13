@@ -1,7 +1,9 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_Link extends Xlib_XListaDados_FieldFormatterAbstract {
-    
+namespace Xlib\XListaDados\FieldFormatter;
+
+class Link extends \Xlib\XListaDados\FieldFormatterAbstract {
+
     protected $id = 'link' ;
     protected $class ;
     protected $href ; 

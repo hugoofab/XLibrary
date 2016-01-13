@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_EditFeedback extends Xlib_XListaDados_FieldFormatterAbstract {
+namespace Xlib\XListaDados\FieldFormatter;
+
+class EditFeedback extends \Xlib\XListaDados\FieldFormatterAbstract {
     
     private $class = "";
     private $style = "";

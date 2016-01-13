@@ -1,7 +1,9 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_FormatIfEquals extends Xlib_XListaDados_FieldFormatterAbstract {
-    
+namespace Xlib\XListaDados\FieldFormatter;
+
+class FormatIfEquals extends \Xlib\XListaDados\FieldFormatterAbstract {
+
     protected $valToCompare = '';
     protected $formatter = null ;
     

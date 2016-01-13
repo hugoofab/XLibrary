@@ -1,6 +1,8 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_Date extends Xlib_XListaDados_FieldFormatterAbstract {
+namespace Xlib\XListaDados\FieldFormatter;
+
+class Date extends \Xlib\XListaDados\FieldFormatterAbstract {
     
     protected $dia ;
     protected $mes ;

@@ -1,13 +1,15 @@
 <?php
 
-class Xlib_XListaDados_FieldFormatter_Edit extends Xlib_XListaDados_FieldFormatterAbstract {
-    
+namespace Xlib\XListaDados\FieldFormatter;
+
+class Edit extends \Xlib\XListaDados\FieldFormatterAbstract {
+
     private $class = "";
     private $style = "";
     private $attributes = array ( );
     
     public function getInstance ( ) {
-        return new Xlib_XListaDados_FieldFormatter_Edit ;
+        return new Edit ;
     }
     
     public function format ( $dataIn ) {
