@@ -29,8 +29,8 @@ class XRemoveButton extends XButton {
 		$this->query        = $query ;
     }
 
-    public static function getInstance ( $label , $class = "" , $iconClass = "" ) {
-        $instance = new Xlib_XListaDados_XButton ( $label , $class , $iconClass ) ;
+    public static function getInstance ( $label , $class = "" , $iconClass = "" , $query = "" ) {
+        $instance = new Xlib_XListaDados_XButton ( $label , $class , $iconClass , $query ) ;
         return $instance ;
     }
 
