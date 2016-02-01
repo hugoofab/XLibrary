@@ -8,25 +8,25 @@ class XRemoveButton extends XButton {
     protected $elementClass ;
     protected $iconClass ;
     protected $style ;
-    protected $cellParams       = array ( ) ;
-    protected $label            = "" ;
-    protected $rowID            = "" ;
-    protected $data ;
-    protected $onClick          = "if (!confirm('Tem certeza que deseja excluir?')) return false ;" ;
-    // protected $onClick          = "" ;
-    protected $buttonType       = "submit";
-    protected $attributes       = array ( );
-    protected $hideIf_list      = array ( ) ;
-    protected $disableIf_list   = array ( ) ;
-    protected $styleIf_list     = array ( ) ;
-    protected $query = "";
+	protected $cellParams     = array ( ) ;
+	protected $label          = "" ;
+	protected $rowID          = "" ;
+	protected $data ;
+	protected $onClick        = "if (!confirm('Tem certeza que deseja excluir?')) return false ;" ;
+	// protected $onClick     = "" ;
+	protected $buttonType     = "submit";
+	protected $attributes     = array ( );
+	protected $hideIf_list    = array ( ) ;
+	protected $disableIf_list = array ( ) ;
+	protected $styleIf_list   = array ( ) ;
+	protected $queryList      = "";
 
     public function __construct ( $label = "" , $class = "btn-xs btn-danger" , $iconClass = "glyphicon glyphicon-remove" , $query = "" ) {
 		$this->label        = $label ;
 		$this->elementClass = $class ;
 		$this->iconClass    = $iconClass ;
-		if ( !empty ( $query ) && !strpos ( $query , "?" ) ) throw new Exception ( "É necessário ter um placeholder \"?\" para o id do registro" );
-		$this->query        = $query ;
+		if ( !empty ( $query ) ) $this->queryList = is_array ( $query ) ? $query : array ( $query );		
+		// if ( !empty ( $query ) && !strpos ( $query , "?" ) ) throw new Exception ( "É necessário ter um placeholder \"?\" para o id do registro" );
     }
 
     public static function getInstance ( $label , $class = "" , $iconClass = "" , $query = "" ) {
@@ -81,16 +81,21 @@ class XRemoveButton extends XButton {
     	if ( $_POST['XLLD_Action'] !== "remove" ) return false;
     	if ( $_POST['objectKey'] !== $this->objectKey ) return false ;
 
-
-    	if ( empty ( $this->query ) ) {
-	    	$query = $this->getListaDadosRef()->getListaDb()->getRemoveQuery($_POST['rowID']);
+    	if ( empty ( $this->queryList ) ) {
+	    	$queryList = array ( $this->getListaDadosRef()->getListaDb()->getRemoveQuery($_POST['rowID']) ) ;
     	} else {
-    		$query = $this->getListaDadosRef()->getListaDb()->bind( $this->query , array ( $_POST['rowID'] ) );
+	    	$queryList = $this->queryList ;
+	    	
+	    	foreach ( $queryList as &$query ) {
+	    		$query = $this->getListaDadosRef()->getListaDb()->bind( $query , array ( $_POST['rowID'] ) );
+	    	}
     	}
 
     	try {
 
-	    	if ( !$this->getListaDadosRef()->getListaDb()->query($query) ) throw new \Exception ( "Não foi possível excluir" );
+	    	foreach ( $queryList as $singleQuery ) {
+		    	if ( !$this->getListaDadosRef()->getListaDb()->query($singleQuery) ) throw new \Exception ( "Não foi possível excluir" );
+	    	}
 
 	    	\Xlib\Response::addFeedback ( "Excluído com sucesso!" , "success" );
     	} catch (Exception $e) {
