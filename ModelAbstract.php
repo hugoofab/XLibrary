@@ -39,9 +39,9 @@ class ModelAbstract {
         }
     }
 
-    public static function getInstance ( $db = null ) {
-	return new ModelAbstract($db);
-    }
+	public static function getInstance ( $db = null ) {
+		return new ModelAbstract($db);
+	}
 
     public static function setDB ( $db ) {
         ModelAbstract::$db = $db;
@@ -51,30 +51,69 @@ class ModelAbstract {
         return ModelAbstract::$db;
     }
 
-
-    private function _fetch ( $method , $query , $db = false ) {
-
-        try {
+	private function _pdoFetch ( $method , $query , $db = false ) {
+		try {
 
 			$start_time = microtime ( TRUE ) ;
 			$output     = array ( );
 			if ( $db === false ) $db = ModelAbstract::$db;
 
-            switch ($method) {
-            	case 'One':
+			$output    = array ( );
+			$statement = ModelAbstract::$db->prepare($query);
+			$res       = $statement->execute();
+
+			switch ($method) {
+				case 'One':
+					$output = $statement->fetchAll(\PDO::FETCH_ASSOC);
+					if ( is_array ( $output ) ) $output = array_shift ( $output );
+					if ( is_array ( $output ) ) $output = array_shift ( $output );
+					break;
+				case 'Row':
+					$output = $statement->fetchAll(\PDO::FETCH_ASSOC);
+					if ( $output !== false ) $output = array_shift ( $output );
+					break;
+				case 'All':
+					$output = $statement->fetchAll(\PDO::FETCH_ASSOC);
+					break;
+				default:
+					die("method " . $method . " not implemented in ModelAbstract");
+			}
+
+			ModelAbstract::logQuery ( $query , $start_time , true , '0' , '' , get_class($this) , $db );
+
+		} catch ( Exception $err ) {
+
+			ModelAbstract::logQuery ( $query , $start_time , false , 0 , $res->userinfo , get_class ( $this ) , $db );
+
+			throw new Exception ( $err->getMessage () ) ;
+
+		}
+
+		return $output ;
+	}
+
+	private function _zendFetch ( $method , $query , $db = false ) {
+		try {
+
+			$start_time = microtime ( TRUE ) ;
+			$output     = array ( );
+			if ( $db === false ) $db = ModelAbstract::$db;
+
+			switch ($method) {
+				case 'One':
 					$statement = ModelAbstract::$db->query($query);
 					$res       = $statement->execute();
 					$output    = array ( );
 					$output    = $res->current();
 					if ( $output !== false ) $output = array_shift ( $output );
-        		break;
-            	case 'Row':
+					break;
+				case 'Row':
 					$statement = ModelAbstract::$db->query($query);
 					$res       = $statement->execute();
 					$output    = array ( );
 					$output    = $res->current();
-        		break;
-            	case 'All':
+					break;
+				case 'All':
 					$statement = ModelAbstract::$db->query($query);
 					$res       = $statement->execute();
 					$res->buffer();
@@ -85,22 +124,31 @@ class ModelAbstract {
 						$output[] = $out;
 						$res->next();
 					}
-        		break;
-            	default:
-            		die("method " . $method . " not implemented in ModelAbstract");
-            }
+					break;
+				default:
+					die("method " . $method . " not implemented in ModelAbstract");
+			}
 
-            ModelAbstract::logQuery ( $query , $start_time , true , '0' , '' , get_class($this) , $db );
+			ModelAbstract::logQuery ( $query , $start_time , true , '0' , '' , get_class($this) , $db );
 
-        } catch ( Exception $err ) {
+		} catch ( Exception $err ) {
 
-            ModelAbstract::logQuery ( $query , $start_time , false , 0 , $res->userinfo , get_class ( $this ) , $db );
+			ModelAbstract::logQuery ( $query , $start_time , false , 0 , $res->userinfo , get_class ( $this ) , $db );
 
-            throw new Exception ( $err->getMessage () ) ;
+			throw new Exception ( $err->getMessage () ) ;
 
-        }
+		}
 
-        return $output ;
+		return $output ;
+	}
+
+    private function _fetch ( $method , $query , $db = false ) {
+
+	    if ( get_class ( ModelAbstract::$db ) === 'Zend\Db\Adapter\Adapter' ) {
+		    return $this->_zendFetch($method,$query,$db);
+        } else if ( get_class ( ModelAbstract::$db ) === 'PDO' ) {
+		    return $this->_pdoFetch($method,$query,$db);
+	    }
 
     }
 
