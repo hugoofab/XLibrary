@@ -39,6 +39,10 @@ class ModelAbstract {
         }
     }
 
+    public static function getInstance ( $db = null ) {
+	return new ModelAbstract($db);
+    }
+
     public static function setDB ( $db ) {
         ModelAbstract::$db = $db;
     }
