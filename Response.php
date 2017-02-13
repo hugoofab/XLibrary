@@ -37,7 +37,14 @@ class Response {
     }
 
     public function __toString (  ) {
+        
+	   header("Content-Type:application/json; charset=utf-8");
 
+        if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
+            ini_set('zlib.output_compression', 'on');
+            header('Content-Encoding:gzip');
+        }
+	    
         $response = array (
             'status'    => $this->status ,
             'message'   => $this->message ,
