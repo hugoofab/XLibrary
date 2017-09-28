@@ -21,7 +21,9 @@ class Response {
 
     public function setError ( $error ) {
 
-        if ( gettype ( $error ) === 'object' && method_exists ( $error , 'getMessage' ) ) {
+    	if ( $error instanceof Exception ) {
+			$error = $error->getMessage ( );
+		} else if ( gettype ( $error ) === 'object' && method_exists ( $error , 'getMessage' ) ) {
             $error = $error->getMessage ( );
         }
 
@@ -30,6 +32,7 @@ class Response {
         return $this ;
 
     }
+
 
     public function setData ( $data ) {
         $this->data = $data ;
