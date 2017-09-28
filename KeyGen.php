@@ -16,9 +16,13 @@ class KeyGen {
      * @param type $minutesToExpire
      */
     public function __construct ( $hashPadding = '' , $minutesToExpire = 5 ) {
-    	$this->salt = APPLICATION_SALT ;
+    	if ( defined ( 'APPLICATION_SALT' ) ) {
+    		$hashPadding .= APPLICATION_SALT ;
+	}
+    	$this->salt = $hashPadding ;
         $this->setMinutesToExpire($minutesToExpire);
     }
+
 
     /**
      * em quantos minutos o hash irá expirar
