@@ -8,6 +8,7 @@ class Response {
 	protected $message    = '' ;
 	protected $data       = array ( );
 	protected $outputType = 'json' ;
+	protected $command    = '';
 
     public function setType ( $type ) {
         if ( !in_array ( $type , array ( 'json' ) ) ) throw new Exception ( "Tipo desconhecido" ) ;
@@ -33,6 +34,29 @@ class Response {
 
     }
 
+	/**
+	 * @return string
+	 */
+	public function getCommand()
+	{
+		return $this->command;
+	}
+
+	/**
+	 * @param string $command
+	 */
+	public function setCommand($command)
+	{
+		$this->command = $command;
+	}
+
+	/**
+	 * @param string $statusCode
+	 */
+	public function setStatus($status)
+	{
+		$this->status = $status;
+	}
 
     public function setData ( $data ) {
         $this->data = $data ;
@@ -54,6 +78,10 @@ class Response {
             'message'   => $this->message ,
             'data'      => $this->data
         ) ;
+
+        if ( !empty ( $this->command ) ) {
+        	$response['cmd'] = $this->command ;
+		}
 
         switch ( $this->outputType ) {
             case "json" :  return Json::encode ( $response ) ;
