@@ -58,8 +58,18 @@ class Response {
 		$this->status = $status;
 	}
 
-    public function setData ( $data ) {
-        $this->data = $data ;
+	/**
+	 * seta dados para serem enviados. 
+	 * @param $data
+	 * @param null $value
+	 * @return $this
+	 */
+    public function setData ( $data , $value = null ) {
+		if ( $value == null ) {
+			$this->data[$data] = $value ;
+		} else {
+			$this->data = $data ;
+		}
         return $this ;
     }
 
