@@ -59,16 +59,16 @@ class Response {
 	}
 
 	/**
-	 * seta dados para serem enviados. 
+	 * seta dados para serem enviados.
 	 * @param $data
 	 * @param null $value
 	 * @return $this
 	 */
     public function setData ( $data , $value = null ) {
 		if ( $value == null ) {
-			$this->data[$data] = $value ;
-		} else {
 			$this->data = $data ;
+		} else {
+			$this->data[$data] = $value ;
 		}
         return $this ;
     }
