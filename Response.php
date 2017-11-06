@@ -8,6 +8,7 @@ class Response {
 	protected $message    = '' ;
 	protected $data       = array ( );
 	protected $outputType = 'json' ;
+	protected $command    = '';
 
     public function setType ( $type ) {
         if ( !in_array ( $type , array ( 'json' ) ) ) throw new Exception ( "Tipo desconhecido" ) ;
@@ -21,7 +22,9 @@ class Response {
 
     public function setError ( $error ) {
 
-        if ( gettype ( $error ) === 'object' && method_exists ( $error , 'getMessage' ) ) {
+    	if ( $error instanceof Exception ) {
+			$error = $error->getMessage ( );
+		} else if ( gettype ( $error ) === 'object' && method_exists ( $error , 'getMessage' ) ) {
             $error = $error->getMessage ( );
         }
 
@@ -31,18 +34,64 @@ class Response {
 
     }
 
-    public function setData ( $data ) {
-        $this->data = $data ;
+	/**
+	 * @return string
+	 */
+	public function getCommand()
+	{
+		return $this->command;
+	}
+
+	/**
+	 * @param string $command
+	 */
+	public function setCommand($command)
+	{
+		$this->command = $command;
+	}
+
+	/**
+	 * @param string $statusCode
+	 */
+	public function setStatus($status)
+	{
+		$this->status = $status;
+	}
+
+	/**
+	 * seta dados para serem enviados.
+	 * @param $data
+	 * @param null $value
+	 * @return $this
+	 */
+    public function setData ( $data , $value = null ) {
+		if ( $value == null ) {
+			$this->data = $data ;
+		} else {
+			$this->data[$data] = $value ;
+		}
         return $this ;
     }
 
     public function __toString (  ) {
+        
+	    // para evitar problemas de encoding, pode-se fazer um utf8_encode ma mensagem ou dados da saida
+	   header("Content-Type:application/json; charset=utf-8");
 
+        if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
+            ini_set('zlib.output_compression', 'on');
+            header('Content-Encoding:gzip');
+        }
+	    
         $response = array (
             'status'    => $this->status ,
             'message'   => $this->message ,
             'data'      => $this->data
         ) ;
+
+        if ( !empty ( $this->command ) ) {
+        	$response['cmd'] = $this->command ;
+		}
 
         switch ( $this->outputType ) {
             case "json" :  return Json::encode ( $response ) ;

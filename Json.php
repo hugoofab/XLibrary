@@ -41,7 +41,7 @@ class Json {
             return '[' . join ( ',' , $result ) . ']' ;
         } else {
             foreach ( $array as $k => $v )
-                $result[] = Json::encode ( $k ) . ':' . Json::encode ( $v ) ;
+                $result[] = Json::encode ( "$k" ) . ':' . Json::encode ( $v ) ;
             return '{' . join ( ',' , $result ) . '}' ;
         }
     }
