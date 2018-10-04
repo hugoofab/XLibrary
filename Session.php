@@ -17,9 +17,13 @@ class Session {
     	return $value ;
     }
 
-    public static function pull ( $array , $key ) {
+    public static function pull ( $array , $key = null ) {
     	if ( !is_array ( $_SESSION[Session::$namespace][$array] ) ) return null ;
-    	return $_SESSION[Session::$namespace][$array][$key] ;
+    	if ( $key === null ) {
+    		return $_SESSION[Session::$namespace][$array] ;    		
+    	} else {
+    		return $_SESSION[Session::$namespace][$array][$key] ;
+    	}
     }
 
     public static function get ( $key ) {
